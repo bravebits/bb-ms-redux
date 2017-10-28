@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="27px" height="27px" viewBox="0 0 27 27" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 44 (41411) - http://www.bohemiancoding.com/sketch -->
+    <title>Grid icon</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Welcome" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="1" transform="translate(-422.000000, -239.000000)" fill="#979797">
+            <g id="Media-Selector-1" transform="translate(220.000000, 177.000000)">
+                <g id="Top-action" transform="translate(202.326667, 59.588785)">
+                    <g id="Grid-icon" transform="translate(0.000000, 3.263551)">
+                        <g transform="translate(0.000000, 0.000000)">
+                            <rect id="Rectangle-3" x="0" y="0" width="12.5226335" height="12.5320374"></rect>
+                            <rect id="Rectangle-3-Copy" x="13.5661863" y="0" width="12.5226335" height="12.5320374"></rect>
+                            <rect id="Rectangle-3-Copy-2" x="13.5661863" y="13.5763738" width="12.5226335" height="12.5320374"></rect>
+                            <rect id="Rectangle-3-Copy-3" x="0" y="13.5763738" width="12.5226335" height="12.5320374"></rect>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
