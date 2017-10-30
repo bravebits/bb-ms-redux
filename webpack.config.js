@@ -33,7 +33,7 @@ let isProd = process.env.BABEL_ENV === 'production'
 module.exports = {
 	context: path.resolve(__dirname, './src'),
 	entry: {
-		app: isProd ? './index.dev.js' : './index.dev.js'
+		app: isProd ? './index.prod.js' : './index.dev.js'
 	},
 	output: {
 		path: path.join(__dirname, '/lib/'),
@@ -55,11 +55,20 @@ module.exports = {
 	},
 	module: {
 		rules: [
-			{
-				test: /\.js$/,
-				exclude: [/node_modules/],
-				use: 'babel-loader'
-			},
+            {
+                test: /\.js$/,
+                include: /src/,
+                loaders: ['babel-loader'],
+            },
+            {
+                test: /\.js$/,
+                exclude: [/node_modules/, /modules/],
+                loaders: ['babel-loader'],
+            }, {
+                test: /\.jsx$/,
+                exclude: [/node_modules/, /modules/],
+                loaders: ['jsx-loader', 'babel-loader'],
+            },
 			{
 				test: /\.(ttf|eot|woff|woff2|svg|gif|jpg|png)$/,
 				use: 'url-loader?limit=10000'
