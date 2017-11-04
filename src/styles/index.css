@@ -85,9 +85,12 @@ body {
     border-radius: 0 0 3px 3px;
     background-color: #F5F5F5;
 }
+.media-selector .box-content-inner {
+	height: 100%;	
+}
 .media-selector .box-content-inner .box__footer {
     border-radius: 0;
-    background: none;
+	background: none;
 }
 .media-selector .box__footer.border-top {
 	border-top: 1px solid #ddd; padding: 0 16px;}
