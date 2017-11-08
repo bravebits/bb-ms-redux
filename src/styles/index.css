@@ -6,10 +6,7 @@ body {
 	height: 100%;
 }
 
-iframe body {
-	margin: auto;
-	padding: 0px;
-	width: 100%;
+iframe .wrapper {
 	height: 100vh;
 }
 
