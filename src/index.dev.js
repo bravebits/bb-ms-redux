@@ -15,15 +15,15 @@ const store = createStore(
 
 const config = {
 	baseURL: 'http://pb.box/dev/',
-	getAllFiles: 'http://pb.box/dev/index.php?pb2ajax=1&task=getListFiles',
+	getAllFiles: 'http://pb.box/dev/index.php?pb3ajax=1&task=getListFiles',
 	getFullDirectory:
-		'http://pb.box/dev/index.php?pb2ajax=1&task=getFullDirectory',
-	uploadFile: 'http://pb.box/dev/index.php?pb2ajax=1&task=uploadFile',
-	createFolder: 'http://pb.box/dev/index.php?pb2ajax=1&task=createFolder',
-	deleteFolder: 'http://pb.box/dev/index.php?pb2ajax=1&task=deleteFolder',
-	deleteFile: 'http://pb.box/dev/index.php?pb2ajax=1&task=deleteFile',
-	renameFolder: 'http://pb.box/dev/index.php?pb2ajax=1&task=renameFolder',
-	renameFile: 'http://pb.box/dev/index.php?pb2ajax=1&task=renameFile'
+		'http://pb.box/dev/index.php?pb3ajax=1&task=getFullDirectory',
+	uploadFile: 'http://pb.box/dev/index.php?pb3ajax=1&task=uploadFile',
+	createFolder: 'http://pb.box/dev/index.php?pb3ajax=1&task=createFolder',
+	deleteFolder: 'http://pb.box/dev/index.php?pb3ajax=1&task=deleteFolder',
+	deleteFile: 'http://pb.box/dev/index.php?pb3ajax=1&task=deleteFile',
+	renameFolder: 'http://pb.box/dev/index.php?pb3ajax=1&task=renameFolder',
+	renameFile: 'http://pb.box/dev/index.php?pb3ajax=1&task=renameFile'
 }
 
 render(

@@ -12,7 +12,7 @@
     <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
           integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-          <link href="../lib/bootstrap4.css" rel="stylesheet" >
+          <link href="/lib/bootstrap4.css" rel="stylesheet" >
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.6.1/react.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.6.1/react-dom.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
@@ -48,7 +48,7 @@
   To create a production bundle, use `npm run build` or `yarn build`.
 -->
 </body>
-<script src="../lib/bb-media-selector.js"></script>
+<script src="/lib/bb-media-selector-dev.js"></script>
 <script>
 	document.addEventListener('choose-file', (data) => {
 		console.log('output', data.detail)
@@ -56,36 +56,6 @@
 	document.addEventListener('select-file', data => {
 		console.log('output', data.detail)
 	})
-</script>
-<!-- below code should only runs on production -->
-
-<script>
-	/**
-	 * Add those line to www/dev/.htaccess of you got CORS issues
-	 *
-	 <IfModule mod_headers.c>
-	 Header set Access-Control-Allow-Origin "*"
-	 </IfModule>
-	 */
-
-	//	Replace to your token, get by window.pagefly_data.token
-	const token = '2f61b8170f74bf14d03ecf9e0dc3dca2'
-	const baseURL = 'http://192.168.33.10/dev/'
-	const config = {
-		baseURL,
-		getAllFiles: baseURL + '/index.php?pb3ajax=1&task=getListFiles' + '&' + token + '=1',
-		getFullDirectory: baseURL + '/index.php?pb3ajax=1&task=getFullDirectory' + '&' + token + '=1',
-		uploadFile: baseURL + '/index.php?pb3ajax=1&task=uploadFile' + '&' + token + '=1',
-		createFolder: baseURL + '/index.php?pb3ajax=1&task=createFolder' + '&' + token + '=1',
-		deleteFolder: baseURL + '/index.php?pb3ajax=1&task=deleteFolder' + '&' + token + '=1',
-		deleteFile: baseURL + '/index.php?pb3ajax=1&task=deleteFile' + '&' + token + '=1',
-		renameFolder: baseURL + '/index.php?pb3ajax=1&task=renameFolder' + '&' + token + '=1',
-		renameFile: baseURL + '/index.php?pb3ajax=1&task=renameFile' + '&' + token + '=1'
-	}
-	ReactDOM.render(React.createElement(BBMediaSelector, {
-		config: config,
-		fileType: 'TYPE_FILE'
-	}), document.getElementById('root'))
 </script>
 <!-- end -->
 </html>

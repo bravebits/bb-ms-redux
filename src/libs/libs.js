@@ -11,8 +11,12 @@ export function mapViewType(viewType) {
 	}
 }
 
-export function isImage(name) {
-	return name.toLowerCase().match(/.(jpg|png|jpeg|gif)$/)
+export function isMedia(name) {
+	return name
+		.toLowerCase()
+		.match(
+			/.(bmp|csv|doc|gif|ico|jpg|jpeg|odg|odp|ods|odt|pdf|png|ppt|swf|txt|xcf|xls)$/
+		)
 }
 
 export function setPathToLocal(path) {
