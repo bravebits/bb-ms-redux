@@ -1,6 +1,6 @@
 {
   "name": "bb-ms-redux",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "private": true,
   "dependencies": {
     "babel-loader": "^7.1.2",
@@ -35,7 +35,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:dev": "webpack --watch",
     "build": "BABEL_ENV=production webpack -p",
-    "start": "npm run build:dev && node server.js"
+    "start": "npm run build:dev"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",

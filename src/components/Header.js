@@ -7,7 +7,6 @@ import * as actions from '../actions'
 class Header extends Component {
 	render() {
 		const { enableHeader } = this.props
-		console.log('shit header', enableHeader)
 		if (!enableHeader) {
 			return null
 		}

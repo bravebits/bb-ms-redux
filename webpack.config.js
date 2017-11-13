@@ -29,7 +29,7 @@ const underscoreExternal = {
 	amd: 'underscore'
 }
 
-let isProd = process.env.BABEL_ENV === 'production'
+const isProd = process.env.BABEL_ENV === 'production'
 module.exports = {
 	context: path.resolve(__dirname, './src'),
 	entry: {
@@ -37,7 +37,7 @@ module.exports = {
 	},
 	output: {
 		path: path.join(__dirname, '/lib/'),
-		filename: 'bb-media-selector.js',
+		filename: isProd ? 'bb-media-selector.js' : 'bb-media-selector-dev.js',
 		library: 'BBMediaSelector',
 		libraryTarget: 'umd',
 		umdNamedDefine: true
@@ -51,24 +51,25 @@ module.exports = {
 	},
 
 	devServer: {
-		contentBase: path.resolve(__dirname, './src')  // New
+		contentBase: path.resolve(__dirname, './src') // New
 	},
 	module: {
 		rules: [
-            {
-                test: /\.js$/,
-                include: /src/,
-                loaders: ['babel-loader'],
-            },
-            {
-                test: /\.js$/,
-                exclude: [/node_modules/, /modules/],
-                loaders: ['babel-loader'],
-            }, {
-                test: /\.jsx$/,
-                exclude: [/node_modules/, /modules/],
-                loaders: ['jsx-loader', 'babel-loader'],
-            },
+			{
+				test: /\.js$/,
+				include: /src/,
+				loaders: ['babel-loader']
+			},
+			{
+				test: /\.js$/,
+				exclude: [/node_modules/, /modules/],
+				loaders: ['babel-loader']
+			},
+			{
+				test: /\.jsx$/,
+				exclude: [/node_modules/, /modules/],
+				loaders: ['jsx-loader', 'babel-loader']
+			},
 			{
 				test: /\.(ttf|eot|woff|woff2|svg|gif|jpg|png)$/,
 				use: 'url-loader?limit=10000'
@@ -108,7 +109,7 @@ module.exports = {
 			'process.env': {
 				NODE_ENV: JSON.stringify('production')
 			}
-		}),
+		})
 		// new webpack.optimize.UglifyJsPlugin({
 		// 	minimize: true,
 		// 	compress: {

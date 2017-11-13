@@ -83,7 +83,8 @@ export function onUploadSuccess(f) {
 export function handleUploadFile(path, endPoint, file, endPointFetchFiles) {
 	return function(dispatch) {
 		joomlaApi.handleUploadFile(path, endPoint, file).then(res => {
-			if (res.message === 'done') {
+			console.log(res)
+			if (res && res.message === 'done') {
 				dispatch(fetchFiles(path, endPointFetchFiles))
 				// get the info of the latest upload file
 				// normal case, if there's only one unique file uploaded, we just need to filter and get info by its name
@@ -124,6 +125,15 @@ export function handleUploadFile(path, endPoint, file, endPointFetchFiles) {
 					addMessage({
 						type: generalConstants.TOAST_SUCCESS,
 						content: 'Upload successfully.',
+						duration: 1000
+					})
+				)
+			} else {
+				dispatch(
+					addMessage({
+						type: generalConstants.TOAST_ERROR,
+						content:
+							'File is not uploaded, please recheck the file type.',
 						duration: 1000
 					})
 				)
@@ -399,7 +409,7 @@ export function deleteMultiFiles(
 							)
 						)
 					} else {
-						if (libs.isImage(files[i])) {
+						if (libs.isMedia(files[i])) {
 							dispatch(
 								deleteFile(
 									files[i],
