@@ -4,6 +4,9 @@ A React media selector (mainly) for Joomla, especially for Pagebuilder 3 and JSN
 ## How to use
 Please check file `index.html` in `public` folder
 NOTE: Sometimes, the `Joomla token checking` does not work, please turn it off so that the MS can get the data
+## Tests
+Your code need pass all tests to merge to master branch<br/>
+Run `yarn test` for running tests
 ## Contributor's guide
 ### Development
 - In the root folder of this project, run `node server.js`
