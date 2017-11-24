@@ -9,6 +9,6 @@ app.get('/', function(req, res) {
 
 app.use('/lib', express.static(`${__dirname}/lib`))
 
-app.listen(4000, function() {
+app.listen(3000, function() {
 	console.log('Please go to http://localhost:3000/ to start hacking!')
 })
