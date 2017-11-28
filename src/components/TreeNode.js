@@ -12,7 +12,8 @@ import * as libs from '../libs/libs'
  * with {isExpanded} and {children}, those 2 variables does not affect store, do not use redux
  */
 class TreeNode extends Component {
-	componentWillMount() {
+	constructor(...args) {
+		super(...args)
 		this.state = {
 			isExpanded: false
 		}

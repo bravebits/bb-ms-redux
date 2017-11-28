@@ -1,33 +1,6 @@
 const path = require('path')
 const webpack = require('webpack')
 
-const UglifyJsPlugin = webpack.optimize.UglifyJsPlugin
-
-const reactExternal = {
-	root: 'React',
-	commonjs2: 'react',
-	commonjs: 'react',
-	amd: 'react'
-}
-const reactDOMExternal = {
-	root: 'ReactDOM',
-	commonjs2: 'react-dom',
-	commonjs: 'react-dom',
-	amd: 'react-dom'
-}
-
-const jqueryExternal = {
-	root: '$',
-	commonjs2: 'jquery',
-	commonjs: 'jquery',
-	amd: 'jquery'
-}
-const underscoreExternal = {
-	root: '_',
-	commonjs2: 'underscore',
-	commonjs: 'underscore',
-	amd: 'underscore'
-}
 
 const isProd = process.env.BABEL_ENV === 'production'
 module.exports = {
@@ -44,10 +17,12 @@ module.exports = {
 	},
 
 	externals: {
-		react: reactExternal,
-		'react-dom': reactDOMExternal,
-		jquery: jqueryExternal,
-		underscore: underscoreExternal
+		'react': 'React',
+		'react-dom': 'ReactDOM',
+		'jquery': '$',
+		'underscore': '_',
+		'redux': 'redux',
+		'prop-types': 'prop-types'
 	},
 
 	devServer: {
