@@ -17,10 +17,10 @@ module.exports = {
 	},
 
 	externals: {
-		'react': 'React',
-		'react-dom': 'ReactDOM',
-		'jquery': '$',
-		'underscore': '_',
+		'react': 'react',
+		'react-dom': 'react-dom',
+		'jquery': 'jquery',
+		'underscore': 'underscore',
 		'redux': 'redux',
 		'prop-types': 'prop-types'
 	},

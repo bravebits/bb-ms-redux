@@ -1,6 +1,6 @@
 {
   "name": "bb-ms-redux",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "private": true,
   "dependencies": {
     "babel-loader": "^7.1.2",
