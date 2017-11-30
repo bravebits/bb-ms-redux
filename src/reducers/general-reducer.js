@@ -1,4 +1,5 @@
 import * as actConstants from '../constants/actions'
+import * as _ from 'underscore'
 
 const initialState = {
 	config: {},
