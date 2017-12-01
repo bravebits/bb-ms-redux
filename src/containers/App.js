@@ -31,10 +31,13 @@ class App extends Component {
 	fetchFiles() {
 		this.props.getPathFromLocal()
 		return new Promise(resolve => {
-			this.props.fetchFiles(
-				this.props.localPath,
-				this.props.config.getAllFiles
-			)
+			const dirs = this.props.localPath.split('/').slice(0, -1)
+			let path = ''
+			_.each(dirs, dir => {
+				path += dir + '/'
+				this.props.getAllFiles(path, this.props.config.getAllFiles)
+			})
+			this.props.setCurrentPath(this.props.localPath)
 		})
 	}
 

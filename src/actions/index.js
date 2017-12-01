@@ -4,14 +4,6 @@ import _ from 'underscore'
 import * as generalConstants from '../constants/general'
 import * as libs from '../libs/libs'
 
-export function getAllFiles(p, f) {
-	return {
-		type: actConstants.GET_ALL_FILES,
-		path: p,
-		files: f
-	}
-}
-
 export function init(c, ft, eH, eF) {
 	return {
 		type: actConstants.INIT,
@@ -22,28 +14,49 @@ export function init(c, ft, eH, eF) {
 	}
 }
 
-export const fetchFiles = (path, endPoint) => {
+export function getAllFiles(path, endPoint) {
 	return dispatch => {
 		joomlaApi.getAllFiles(path, endPoint).done(res => {
-			dispatch(getAllFiles(path, JSON.parse(res)))
-			dispatch(expandTreeNode(path, endPoint, () => {}, () => {}))
+			dispatch({
+				type:actConstants.GET_ALL_FILES,
+				path,
+				files: JSON.parse(res)
+			})
 		})
+		return Promise.resolve()
 	}
 }
 
-export function expandTreeNodeSuccess(t) {
+export function setCurrentPath(path) {
 	return {
-		type: actConstants.EXPAND_TREE_NODE_SUCCESS,
-		treeNodes: t
+		type: actConstants.SET_CURRENT_PATH,
+		path
 	}
 }
 
-export function expandTreeNode(path, endPoint, resolve, reject) {
-	return function(dispatch) {
-		joomlaApi.getAllFiles(path, endPoint).done(res => {
-			dispatch(expandTreeNodeSuccess(JSON.parse(res)))
-			resolve(JSON.parse(res))
+export const fetchFiles = (path, endPoint) => {
+	return dispatch => {
+		dispatch(getAllFiles(path, endPoint))
+		dispatch(setCurrentPath(path))
+	}
+}
+
+export function expandTreeNode(path, endPoint, treeNodes) {
+	return dispatch => {
+		if (libs.getNodeByPath(treeNodes, path).children === undefined) {
+			dispatch(getAllFiles(path, endPoint))
+		}
+		dispatch({
+			type: actConstants.EXPAND_TREE_NODE,
+			path: path
 		})
+	}
+}
+
+export function collapseTreeNode(path) {
+	return {
+		type: actConstants.COLLAPSE_TREE_NODE,
+		path: path
 	}
 }
 
@@ -60,16 +73,10 @@ export function toggleSidebar() {
 	}
 }
 
-export function searchInFolder(k) {
+export function updateSearchString(k) {
 	return {
-		type: actConstants.SEARCH_IN_FOLDER,
+		type: actConstants.UPDATE_SEARCH_STRING,
 		keyWord: k
-	}
-}
-
-export function clearSearchResults() {
-	return {
-		type: actConstants.CLEAR_SEARCH_RESULTS
 	}
 }
 
@@ -294,7 +301,7 @@ export function selectFile(p) {
 export function onDeleteFileSuccess(fn) {
 	return {
 		type: actConstants.DELETE_FILE_SUCCESS,
-		fileName: fn
+		name: fn
 	}
 }
 
@@ -332,7 +339,7 @@ export function deleteFile(path, endPoint, currentPath, mode) {
 export function onDeleteFolderSuccess(fn) {
 	return {
 		type: actConstants.DELETE_FOLDER_SUCCESS,
-		folderName: fn
+		name: fn
 	}
 }
 
@@ -474,12 +481,9 @@ export function onCancel() {
 	}
 }
 
-export function checkAll(cp, fs, ft) {
+export function checkAll() {
 	return {
 		type: actConstants.CHECK_ALL,
-		currentPath: cp,
-		files: fs,
-		fileType: ft
 	}
 }
 

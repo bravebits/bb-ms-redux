@@ -1,35 +1,53 @@
 import reducer from '../../reducers/file-reducer'
 import * as actConstants from '../../constants/actions'
-import { RENAME_FILE_SUCCESS } from '../../constants/actions';
 
 const initialState = {
-	selectedFile: null,
-	selectedFiles: [],
-	chosenFile: '',
-	treeNodes: [],
-	files: [],
-	currentPath: '/',
-	searchResults: []
+  selectedFile: '',
+  selectedFiles: [],
+  chosenFile: '',
+  treeNodes: {
+    isExpanded: false,
+    name: 'images',
+    type: 'dir'
+  },
+  currentPath: '/',
+  searchString: ''
 }
 
 const randomState = {
-  selectedFile: '/whatever.jpg',
+  selectedFile: '/image.jpg',
   selectedFiles: [
     '/New folder/image.png',
     '/whatever.jpg'
   ],
   chosenFile: '/whatever.jpg',
-  treeNodes: [{ name: 'New folder 1', type: 'dir', file_size: 0.05 }],
-  files: [
-    { name: 'New folder', type: 'dir', file_size: 0.05 },
-    { name: 'image.png', type: 'file', file_size: 0.01 },
-    { name: 'whatever.jpg', type: 'file', file_size: 0.02 }
-  ],
-  currentPath: '/',
-  searchResults: [
-    { name: 'image.png', type: 'file', file_size: 0.01 },
-    { name: 'whatever.jpg', type: 'file', file_size: 0.02 }
-  ]
+  treeNodes: {
+    isExpanded: false,
+    name: 'images',
+    type: 'dir',
+    children: [
+      {
+        isExpanded: false,
+        name: 'banners',
+        type: 'dir',
+        children: [
+          { name: 'A folder', type: 'dir' },
+          { name: 'file.txt', type: 'file' }
+        ]
+      },
+      {
+        isExpanded: true,
+        name: 'New folder',
+        type: 'dir'
+      },
+      {
+        name: 'image.jpg',
+        type: 'file'
+      }
+    ]
+  },
+  currentPath: '/banners/',
+  searchString: 'abc'
 }
 
 const sampleFiles = [
@@ -49,7 +67,7 @@ describe('init state', () => {
 describe('handle not existing action', () => {
   it('should return current state', () => {
     expect(reducer(randomState, { type: 'not existing' }))
-    .toEqual(randomState)
+    .toBe(randomState)
   })
 })
 
@@ -61,287 +79,254 @@ describe('handle GET_ALL_FILES action', () => {
   const initProps = {
     selectedFiles: [],
     selectedFile: null,
-    searchResults: []
+    searchString: ''
   }
 
-  it('should update properties', () => {
-    expect(reducer(randomState, {
+  it('should update treeNodes', () => {
+    const newState = reducer(randomState, {
       type: actConstants.GET_ALL_FILES,
       ...sampleProps
-    })).toEqual({
-      ...randomState,
-      currentPath: sampleProps.path,
-      files: sampleProps.files,
-      ...initProps
     })
+    expect(newState.treeNodes.children[1]).toHaveProperty('children', sampleFiles)
   })
 
-  it('should set default value for undefined properties', () => {
-    expect(reducer(randomState, {
-      type: actConstants.GET_ALL_FILES,
-      path: undefined,
-      files: undefined
-    })).toEqual({
-      ...randomState,
-      ...initProps,
-      files: initialState.files,
-      currentPath: initialState.currentPath
+  it('should set default value for selectedFile and selectedFiles', () => {
+    const newState = reducer(randomState, {
+      type: actConstants.UPDATE_SEARCH_STRING,
+      keyWord: 'abcd'
     })
+    expect(newState.selectedFile).toEqual(null)
+    expect(newState.selectedFiles).toEqual([])
   })
 
   it('should ignore extra properties', () => {
-    expect(reducer(randomState, {
+    const newState = reducer(randomState, {
       type: actConstants.GET_ALL_FILES,
       ...sampleProps,
-      extraProps: 'something',
-      chosenFile: 'filename'
-    })).toEqual({
-      ...randomState,
-      currentPath: sampleProps.path,
-      files: sampleProps.files,
-      ...initProps
-    })
-  })
-})
-
-describe('handle EXPAND_TREE_NODE_SUCCESS action', () => {
-  it('should update treeNodes property', () => {
-    expect(reducer(randomState, {
-      type: actConstants.EXPAND_TREE_NODE_SUCCESS,
-      treeNodes: sampleFiles
-    })).toEqual({ ...randomState, treeNodes: sampleFiles })
-  })
-
-  it('should set default value for undefined property', () => {
-    expect(reducer(randomState, {
-      type: actConstants.EXPAND_TREE_NODE_SUCCESS,
-      treeNodes: undefined
-    })).toEqual({ ...randomState, treeNodes: initialState.treeNodes })
-  })
-
-  it('should ignore extra properties', () => {
-    expect(reducer(randomState, {
-      type: actConstants.EXPAND_TREE_NODE_SUCCESS,
-      treeNodes: sampleFiles,
       extraProp: 'something',
-      path: '/path/to/somewhere'
-    })).toEqual({ ...randomState, treeNodes: sampleFiles })
+      chosenFile: 'filename'
+    })
+    expect(newState).not.toHaveProperty('extraProp')
+    expect(newState.chosenFile).toEqual(randomState.chosenFile)
   })
 })
 
-describe('handle SEARCH_IN_FOLDER action', () => {
-  const initProps = {
-    selectedFiles: [],
-    selectedFile: null
-  }
-
-  it('should filter exactly', () => {
-    expect(reducer(randomState, {
-      type: actConstants.SEARCH_IN_FOLDER,
-      keyWord: 'image'
-    })).toEqual({
-      ...randomState,
-      ...initProps,
-      searchResults: [{ name: 'image.png', type: 'file', file_size: 0.01 }]
+describe('handle SET_CURRENT_PATH action', () => {
+  it('should update currentPath', () => {
+    const newState = reducer(randomState, {
+      type: actConstants.SET_CURRENT_PATH,
+      path: '/New folder/'
     })
-  })
-
-  it('should filter right if keyWord equal to empty string', () => {
-    expect(reducer(randomState, {
-      type: actConstants.SEARCH_IN_FOLDER,
-      keyWord: ''
-    })).toEqual({
-      ...randomState,
-      ...initProps,
-      searchResults: randomState.files
-    })
-  })
-
-  it('should update searchResults to [] if no results match', () => {
-    expect(reducer(randomState, {
-      type: actConstants.SEARCH_IN_FOLDER,
-      keyWord: 'anything'
-    })).toEqual({
-      ...randomState,
-      ...initProps,
-      searchResults: []
-    })
-  })
-
-  it('should set default value for undefined property', () => {
-    expect(reducer(randomState, {
-      type: actConstants.SEARCH_IN_FOLDER,
-      keyWord: undefined
-    })).toEqual({ ...randomState, ...initProps })
+    expect(newState.currentPath).toEqual('/New folder/')
   })
 
   it('should ignore extra properties', () => {
-    expect(reducer(randomState, {
-      type: actConstants.SEARCH_IN_FOLDER,
+    const newState = reducer(randomState, {
+      type: actConstants.SET_CURRENT_PATH,
+      path: '/New folder/',
+      extraProp: 'something',
+      treeNodes: {}
+    })
+    expect(newState).not.toHaveProperty('extraProp')
+    expect(newState.treeNodes).toEqual(randomState.treeNodes)
+  })
+})
+
+describe('handle EXPAND_TREE_NODE action', () => {
+  it('should update isExpanded true for given path', () => {
+    const newState = reducer(randomState, {
+      type: actConstants.EXPAND_TREE_NODE,
+      path: '/banners/'
+    })
+    expect(newState.treeNodes.children[0].isExpanded).toEqual(true)
+  })
+
+  it('should not update anything when isExpanded already true', () => {
+    const newState = reducer(randomState, {
+      type: actConstants.EXPAND_TREE_NODE,
+      path: '/New folder/'
+    })
+    expect(newState).toEqual(randomState)
+  })
+
+  it('should ignore extra properties', () => {
+    const newState = reducer(randomState, {
+      type: actConstants.EXPAND_TREE_NODE,
+      path: '/banners/',
+      extraProp: 'something',
+      selectedFiles: []
+    })
+    expect(newState).not.toHaveProperty('extraProp')
+    expect(newState.selectedFiles).toEqual(randomState.selectedFiles)
+  })
+})
+
+describe('handle COLLAPSE_TREE_NODE action', () => {
+  it('should update isExpanded false for given path', () => {
+    const newState = reducer(randomState, {
+      type: actConstants.COLLAPSE_TREE_NODE,
+      path: '/New folder/'
+    })
+    expect(newState.treeNodes.children[1].isExpanded).toEqual(false)
+  })
+
+  it('should not update anything when isExpanded already false', () => {
+    const newState = reducer(randomState, {
+      type: actConstants.COLLAPSE_TREE_NODE,
+      path: '/banners/'
+    })
+    expect(newState).toEqual(randomState)
+  })
+
+  it('should ignore extra properties', () => {
+    const newState = reducer(randomState, {
+      type: actConstants.COLLAPSE_TREE_NODE,
+      path: '/New folder/',
+      extraProp: 'something',
+      selectedFiles: []
+    })
+    expect(newState).not.toHaveProperty('extraProp')
+    expect(newState.selectedFiles).toEqual(randomState.selectedFiles)
+  })
+})
+
+describe('handle UPDATE_SEARCH_STRING action', () => {
+  it('should update searchString', () => {
+    const newState = reducer(randomState, {
+      type: actConstants.UPDATE_SEARCH_STRING,
+      keyWord: 'image'
+    })
+    expect(newState.searchString).toEqual('image')
+  })
+
+  it('should set default value for selectedFile and selectedFiles', () => {
+    const newState = reducer(randomState, {
+      type: actConstants.UPDATE_SEARCH_STRING,
+      keyWord: 'abcd'
+    })
+    expect(newState.selectedFile).toEqual(null)
+    expect(newState.selectedFiles).toEqual([])
+  })
+
+  it('should ignore extra properties', () => {
+    const newState = reducer(randomState, {
+      type: actConstants.UPDATE_SEARCH_STRING,
       keyWord: 'e',
       extraProp: 'something',
-      files: sampleFiles
-    })).toEqual({
-      ...randomState,
-      ...initProps,
-      searchResults: randomState.files
+      treeNodes: {}
     })
-  })
-})
-
-describe('handle CLEAR_SEARCH_RESULTS action', () => {
-  const initProps = {
-    selectedFiles: [],
-    selectedFile: null,
-    searchResults: []
-  }
-
-  it('should update state', () => {
-    expect(reducer(randomState, {
-      type: actConstants.CLEAR_SEARCH_RESULTS,
-    })).toEqual({ ...randomState, ...initProps })
-  })
-  it('should ignore extra properties', () => {
-    expect(reducer(randomState, {
-      type: actConstants.CLEAR_SEARCH_RESULTS,
-      extraProp: 'something',
-      files: sampleFiles
-    })).toEqual({ ...randomState, ...initProps })
+    expect(newState).not.toHaveProperty('extraProp')
+    expect(newState.treeNodes).toEqual(randomState.treeNodes)
   })
 })
 
 describe('handle CHOOSE_FILE action', () => {
   const samplePath = '/New folder/image.png'
-  const initProps = {
-    selectedFiles: [],
-    selectedFile: null
-  }
 
   it('should update chosenFile property', () => {
-    expect(reducer(randomState, {
+    const newState = reducer(randomState, {
       type: actConstants.CHOOSE_FILE,
       path: samplePath
-    })).toEqual({
-      ...randomState,
-      ...initProps,
-      chosenFile: samplePath,
     })
+    expect(newState.chosenFile).toEqual(samplePath)
   })
 
-  it('should set default value for undefined property', () => {
-    expect(reducer(randomState, {
+  it('should set default value for selectedFile and selectedFiles', () => {
+    const newState = reducer(randomState, {
       type: actConstants.CHOOSE_FILE,
-      path: undefined
-    })).toEqual({
-      ...randomState,
-      ...initProps,
-      chosenFile: initialState.chosenFile
+      keyWord: 'abcd'
     })
+    expect(newState.selectedFile).toEqual(null)
+    expect(newState.selectedFiles).toEqual([])
   })
 
   it('should ignore extra properties', () => {
-    expect(reducer(randomState, {
+    const newState = reducer(randomState, {
       type: actConstants.CHOOSE_FILE,
       path: samplePath,
       extraProp: 'something',
-      files: sampleFiles
-    })).toEqual({
-      ...randomState,
-      ...initProps,
-      chosenFile: samplePath
+      treeNodes: {}
     })
+    expect(newState).not.toHaveProperty('extraProp')
+    expect(newState.treeNodes).toEqual(randomState.treeNodes)
   })
 })
 
 describe('handle SELECT_FILE action', () => {
   const samplePath = '/New folder/image.png'
 
-  it('should update selectedFile property', () => {
-    expect(reducer(randomState, {
+  it('should update selectedFile', () => {
+    const newState = reducer(randomState, {
       type: actConstants.SELECT_FILE,
       path: samplePath
-    })).toEqual({
-      ...randomState,
-      selectedFile: samplePath,
-      selectedFiles: []
     })
+    expect(newState.selectedFile).toEqual(samplePath)
   })
 
-  it('should set default value for undefined property', () => {
-    expect(reducer(randomState, {
+  it('should set selectedFiles to []', () => {
+    const newState = reducer(randomState, {
       type: actConstants.SELECT_FILE,
-      path: undefined
-    })).toEqual({
-      ...randomState,
-      selectedFile: initialState.selectedFile,
-      selectedFiles: []
+      path: samplePath
     })
+    expect(newState.selectedFiles).toEqual([])
   })
 
   it('should ignore extra properties', () => {
-    expect(reducer(randomState, {
+    const newState = reducer(randomState, {
       type: actConstants.SELECT_FILE,
       path: samplePath,
       extraProp: 'something',
-      files: sampleFiles
-    })).toEqual({
-      ...randomState,
-      selectedFile: samplePath,
-      selectedFiles: []
+      treeNodes: {}
     })
+    expect(newState).not.toHaveProperty('extraProp')
+    expect(newState.treeNodes).toEqual(randomState.treeNodes)
   })
 })
 
 describe('handle SELECT_MULTI_FILE_ADD action', () => {
   const samplePath = '/New folder/image.png'
 
-  it('should update selecedFiles property', () => {
-    expect(reducer(randomState, {
+  it('should add element to selecedFiles array', () => {
+    const newState = reducer(randomState, {
       type: actConstants.SELECT_MULTI_FILE_ADD,
       path: samplePath
-    })).toEqual({
-      ...randomState,
-      selectedFiles: [ ...randomState.selectedFiles, samplePath ],
-      selectedFile: null
     })
+    expect(newState.selectedFiles)
+    .toHaveLength(randomState.selectedFiles.length + 1)
+    expect(newState.selectedFiles).toContain(samplePath)
   })
 
-  it('should ignore undefined property', () => {
-    expect(reducer(randomState, {
+  it('should set selectedFile to null', () => {
+    const newState = reducer(randomState, {
       type: actConstants.SELECT_MULTI_FILE_ADD,
-      path: undefined
-    })).toEqual({
-      ...randomState,
-      selectedFile: null
+      path: samplePath
     })
+    expect(newState.selectedFile).toEqual(null)
   })
 
-  it('should ignore extra property', () => {
-    expect(reducer(randomState, {
+  it('should ignore extra properties', () => {
+    const newState = reducer(randomState, {
       type: actConstants.SELECT_MULTI_FILE_ADD,
       path: samplePath,
       extraProp: 'something',
-      files: sampleFiles
-    })).toEqual({
-      ...randomState,
-      selectedFiles: [ ...randomState.selectedFiles, samplePath ],
-      selectedFile: null
+      treeNodes: {}
     })
+    expect(newState).not.toHaveProperty('extraProp')
+    expect(newState.treeNodes).toEqual(randomState.treeNodes)
   })
 })
 
 describe('handle SELECT_MULTI_FILE_REMOVE action', () => {
   const samplePath = randomState.selectedFiles[0]
-  const selectedFiles = randomState.selectedFiles.slice(1)
 
-  it('should update selectedFiles property', () => {
-    expect(reducer(randomState, {
+  it('should remove element from selectedFiles array', () => {
+    const newState = reducer(randomState, {
       type: actConstants.SELECT_MULTI_FILE_REMOVE,
       path: samplePath
-    })).toEqual({
-      ...randomState,
-      selectedFiles
     })
+    expect(newState.selectedFiles)
+    .toHaveLength(randomState.selectedFiles.length - 1)
+    expect(newState.selectedFiles).not.toContain(samplePath)
   })
 
   it('should ignore if path not in selectedFiles array', () => {
@@ -352,47 +337,41 @@ describe('handle SELECT_MULTI_FILE_REMOVE action', () => {
   })
 
   it('should run normally if selectedFiles array empty', () => {
-    expect(reducer({ ...randomState, selectedFiles: [] }, {
+    const newState = reducer({ ...randomState, selectedFiles: [] }, {
       type: actConstants.SELECT_MULTI_FILE_REMOVE,
       path: samplePath
-    })).toEqual({
-      ...randomState,
-      selectedFiles: []
     })
-  })
-
-  it('should ignore undefined property', () => {
-    expect(reducer(randomState, {
-      type: actConstants.SELECT_MULTI_FILE_REMOVE,
-      path: undefined
-    })).toEqual(randomState)
+    expect(newState.selectedFiles).toEqual([])
   })
 
   it('should ignore extra properties', () => {
-    expect(reducer(randomState, {
+    const newState = reducer(randomState, {
       type: actConstants.SELECT_MULTI_FILE_REMOVE,
       path: samplePath,
       extraProp: 'something',
-      files: sampleFiles
-    })).toEqual({
-      ...randomState,
-      selectedFiles
+      treeNodes: {}
     })
+    expect(newState).not.toHaveProperty('extraProp')
+    expect(newState.treeNodes).toEqual(randomState.treeNodes)
   })
 })
 
 describe('handle DELETE_FILES_SUCCESS action', () => {
   it('should set selectedFiles to []', () => {
-    expect(reducer(randomState, {
+    const newState = reducer(randomState, {
       type: actConstants.DELETE_FILES_SUCCESS,
-    })).toEqual({ ...randomState, selectedFiles: [] })
+    })
+    expect(newState.selectedFiles).toEqual([])
   })
+
   it('should ignore extra properties', () => {
-    expect(reducer(randomState, {
+    const newState = reducer(randomState, {
       type: actConstants.DELETE_FILES_SUCCESS,
       extraProp: 'something',
-      files: sampleFiles
-    })).toEqual({ ...randomState, selectedFiles: [] })
+      treeNodes: {}
+    })
+    expect(newState).not.toHaveProperty('extraProp')
+    expect(newState.treeNodes).toEqual(randomState.treeNodes)
   })
 })
 
@@ -401,221 +380,222 @@ describe('handle CHECK_ALL action', () => {
   const selectedFiles = sampleFiles.map(file => currentPath + file.name)
 
   it('should add all files to selectedFiles array', () => {
-    expect(reducer(randomState, {
-      type: actConstants.CHECK_ALL,
-      files: sampleFiles,
-      currentPath
-    })).toEqual({
-      ...randomState,
-      selectedFiles,
-      selectedFile: null
+    const newState = reducer(randomState, {
+      type: actConstants.CHECK_ALL
     })
-  })
-
-  it('should ignore undefine properties', () => {
-    expect(reducer(randomState, {
-      type: actConstants.CHECK_ALL,
-      files: undefined,
-      currentPath: undefined
-    })).toEqual(randomState)
+    expect(newState.selectedFiles).toEqual(randomState.treeNodes.children[0].children)
   })
 
   it('should ignore extra properties', () => {
-    expect(reducer(randomState, {
+    const newState = reducer(randomState, {
       type: actConstants.CHECK_ALL,
-      files: sampleFiles,
-      currentPath,
       extraProps: 'something',
-      path: '/path/to/somewhere'
-    })).toEqual({
-      ...randomState,
-      selectedFiles,
-      selectedFile: null
+      treeNodes: {}
     })
+    expect(newState).not.toHaveProperty('extraProp')
+    expect(newState.treeNodes).toEqual(randomState.treeNodes)
   })
 })
 
 describe('handle UNCHECK_ALL action', () => {
   it('should set selectedFiles to []', () => {
-    expect(reducer(randomState, {
+    const newState = reducer(randomState, {
       type: actConstants.UNCHECK_ALL
-    })).toEqual({
-      ...randomState,
-      selectedFiles: []
     })
+    expect(newState.selectedFiles).toEqual([])
   })
 
   it('should ignore extra properties', () => {
-    expect(reducer(randomState, {
+    const newState = reducer(randomState, {
       type: actConstants.UNCHECK_ALL,
       extraProp: 'something',
-      files: sampleFiles
-    })).toEqual({
-      ...randomState,
-      selectedFiles: []
+      treeNodes: {}
     })
+    expect(newState).not.toHaveProperty('extraProp')
+    expect(newState.treeNodes).toEqual(randomState.treeNodes)
   })
 })
 
 describe('handle CREATE_FOLDER_SUCCESS action', () => {
   const sampleFile = sampleFiles[0]
 
-  it('should add file to files array', () => {
-    expect(reducer(randomState, {
+  it('should add folder to treeNodes', () => {
+    const newState = reducer(randomState, {
       type: actConstants.CREATE_FOLDER_SUCCESS,
       file: sampleFile
-    })).toEqual({
-      ...randomState,
-      files: [ ...randomState.files, sampleFile ]
     })
-  })
-
-  it('should ignore undefined property',  () => {
-    expect(reducer(randomState, {
-      type: actConstants.CREATE_FOLDER_SUCCESS,
-      file: undefined
-    })).toEqual(randomState)
+    expect(newState.treeNodes.children[0].children).toContain(sampleFile)
   })
 
   it('shoud ignore extra property', () => {
-    expect(reducer(randomState, {
+    const newState = reducer(randomState, {
       type: actConstants.CREATE_FOLDER_SUCCESS,
       file: sampleFile,
       extraProp: 'something',
-      ffiles: sampleFiles
-    })).toEqual({
-      ...randomState,
-      files: [ ...randomState.files, sampleFile ]
+      selectedFiles: []
     })
+    expect(newState).not.toHaveProperty('extraProp')
+    expect(newState.selectedFiles).toEqual(randomState.selectedFiles)
   })
 })
 
 describe('handle UPLOAD_SUCCESS action', () => {
   const sampleFile = sampleFiles[4]
 
-  it('should add file to files array', () => {
-    expect(reducer(randomState, {
+  it('should add file to treeNodes', () => {
+    const newState = reducer(randomState, {
       type: actConstants.UPLOAD_SUCCESS,
       file: sampleFile
-    })).toEqual({
-      ...randomState,
-      files: [ ...randomState.files, sampleFile ]
     })
-  })
-
-  it('should ignore undefined property',  () => {
-    expect(reducer(randomState, {
-      type: actConstants.UPLOAD_SUCCESS,
-      file: undefined
-    })).toEqual(randomState)
+    expect(newState.treeNodes.children[0].children).toContain(sampleFile)
   })
 
   it('shoud ignore extra property', () => {
-    expect(reducer(randomState, {
+    const newState = reducer(randomState, {
       type: actConstants.UPLOAD_SUCCESS,
       file: sampleFile,
       extraProp: 'something',
-      ffiles: sampleFiles
-    })).toEqual({
-      ...randomState,
-      files: [ ...randomState.files, sampleFile ]
+      selectedFiles: []
     })
+    expect(newState).not.toHaveProperty('extraProp')
+    expect(newState.selectedFiles).toEqual(randomState.selectedFiles)
   })
 })
 
 describe('handle RENAME_FOLDER_SUCCESS action', () => {
-  const oldName = randomState.files[0]
+  const oldName = 'A folder'
   const newName = 'new name'
-  const files = [{
-    ...randomState.files[0],
-    name: 'new name'
-  }].concat(randomState.files.slice(1))
 
-  it('should update file name in files array', () => {
-    expect(reducer(randomState, {
+  it('should update file name in treeNodes', () => {
+    const newState = reducer(randomState, {
       type: actConstants.RENAME_FOLDER_SUCCESS,
       oldName, newName
-    })).toEqual({ ...randomState, files })
-  })
-
-  it('should ignore undefined properties', () => {
-    expect(reducer(randomState, {
-      type: actConstants.RENAME_FOLDER_SUCCESS,
-      oldName: undefined,
-      newName: undefined
-    })).toEqual(randomState)
+    })
+    expect(newState.treeNodes.children[0].children)
+    .toHaveLength(randomState.treeNodes.children[0].children.length)
+    expect(newState.treeNodes.children[0].children)
+    .toContainEqual(expect.objectContaining({ name: 'new name' }))
   })
 
   it('should ignore extra properties', () => {
-    expect(reducer(randomState, {
+    const newState = reducer(randomState, {
       type: actConstants.RENAME_FOLDER_SUCCESS,
       oldName, newName,
       extraProp: 'something',
-      files: sampleFiles
-    })).toEqual({ ...randomState, files })
+      selectedFiles: []
+    })
+    expect(newState).not.toHaveProperty('extraProp')
+    expect(newState.selectedFiles).toEqual(randomState.selectedFiles)
   })
 })
 
 describe('handle RENAME_FILE_SUCCESS action', () => {
-  const oldName = randomState.files[0]
+  const oldName = 'file.txt'
   const newName = 'new name'
-  const files = [{
-    ...randomState.files[0],
-    name: 'new name'
-  }].concat(randomState.files.slice(1))
 
-  it('should update file name in files array', () => {
-    expect(reducer(randomState, {
+  it('should update file name in treeNodes', () => {
+    const newState = reducer(randomState, {
       type: actConstants.RENAME_FILE_SUCCESS,
       oldName, newName
-    })).toEqual({ ...randomState, files })
-  })
-
-  it('should ignore undefined properties', () => {
-    expect(reducer(randomState, {
-      type: actConstants.RENAME_FILE_SUCCESS,
-      oldName: undefined,
-      newName: undefined
-    })).toEqual(randomState)
+    })
+    expect(newState.treeNodes.children[0].children)
+    .toHaveLength(randomState.treeNodes.children[0].children.length)
+    expect(newState.treeNodes.children[0].children)
+    .toContainEqual(expect.objectContaining({ name: 'new name' }))
   })
 
   it('should ignore extra properties', () => {
-    expect(reducer(randomState, {
+    const newState = reducer(randomState, {
       type: actConstants.RENAME_FILE_SUCCESS,
       oldName, newName,
       extraProp: 'something',
-      files: sampleFiles
-    })).toEqual({ ...randomState, files })
+      selectedFiles: []
+    })
+    expect(newState).not.toHaveProperty('extraProp')
+    expect(newState.selectedFiles).toEqual(randomState.selectedFiles)
+  })
+})
+
+describe('hanlde DELETE_FOLDER_SUCCESS action', () => {
+  const name = 'A folder'
+
+  it('should remove folder from treeNodes', () => {
+    const newState = reducer(randomState, {
+      type: actConstants.DELETE_FOLDER_SUCCESS,
+      name
+    })
+    expect(newState.treeNodes.children[0].children)
+    .toHaveLength(randomState.treeNodes.children[0].children.length - 1)
+    expect(newState.treeNodes.children[0].children)
+    .not.toContainEqual(expect.objectContaining({ name }))
+  })
+
+  it('should ignore if folder with name not in current folder', () => {
+    const newState = reducer(randomState, {
+      type: actConstants.DELETE_FOLDER_SUCCESS,
+      name: 'New folder'
+    })
+    expect(newState).toEqual(randomState)
+  })
+
+  it('should run normally if current folder empty', () => {
+    const newState = reducer({ randomState, currentPath: '/New folder/' }, {
+      type:actConstants.DELETE_FOLDER_SUCCESS,
+      name
+    })
+    expect(newState.treeNodes.children[1]).not.toHaveProperty('children')
+  })
+
+  it('should ignore extra properties', () => {
+    const newState = reducer(randomState, {
+      type: actConstants.DELETE_FOLDER_SUCCESS,
+      name,
+      extraProp: 'something',
+      selectedFiles: []
+    })
+    expect(newState).not.toHaveProperty('extraProp')
+    expect(newState.selectedFiles).toEqual(randomState.selectedFiles)
   })
 })
 
 describe('handle DELETE_FILE_SUCCESS action', () => {
-  it('should remove file from files array', () => {
-    expect(reducer(randomState, {
+  const name = 'file.txt'
+
+  it('should remove file from treeNodes', () => {
+    const newState = reducer(randomState, {
       type: actConstants.DELETE_FILE_SUCCESS,
-      fileName: randomState.files[0].name
-    })).toEqual({
-      ...randomState,
-      files: randomState.files.slice(1)
+      name
     })
+    expect(newState.treeNodes.children[0].children)
+    .toHaveLength(randomState.treeNodes.children[0].children.length - 1)
+    expect(newState.treeNodes.children[0].children)
+    .not.toContainEqual(expect.objectContaining({ name }))
   })
 
-  it('should ignore undefined property', () => {
-    expect(reducer(randomState, {
+  it('should ignore if file with name not in current folder', () => {
+    const newState = reducer(randomState, {
       type: actConstants.DELETE_FILE_SUCCESS,
-      fileName: undefined
-    })).toEqual(randomState)
+      name: 'image.jpg'
+    })
+    expect(newState).toEqual(randomState)
+  })
+
+  it('should run normally if current folder empty', () => {
+    const newState = reducer({ randomState, currentPath: '/New folder/' }, {
+      type:actConstants.DELETE_FILE_SUCCESS,
+      name
+    })
+    expect(newState.treeNodes.children[1]).not.toHaveProperty('children')
   })
 
   it('should ignore extra property', () => {
-    expect(reducer(randomState, {
+    const newState = reducer(randomState, {
       type: actConstants.DELETE_FILE_SUCCESS,
-      fileName: randomState.files[0].name,
+      name,
       extraProp: 'something',
-      files: sampleFiles
-    })).toEqual({
-      ...randomState,
-      files:randomState.files.slice(1)
+      selectedFiles: []
     })
+    expect(newState).not.toHaveProperty('extraProp')
+    expect(newState.selectedFiles).toEqual(randomState.selectedFiles)
   })
 })

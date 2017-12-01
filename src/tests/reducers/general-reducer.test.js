@@ -59,7 +59,7 @@ describe('init state', () => {
 describe('handle not existing action', () => {
   it('should return current state', () => {
     expect(reducer(randomState, { type: 'not existing' }))
-    .toEqual(randomState)
+    .toBe(randomState)
   })
 })
 
@@ -81,21 +81,6 @@ describe('handle INIT action', () => {
     .toEqual({ ...randomState, ...sampleProps })
   })
 
-  it('should set default value for undefined properties', () => {
-    const { config, fileType, enableHeader, enableFooter } = initialState
-
-    expect(reducer(randomState, {
-      type: actConstants.INIT,
-      config: undefined,
-      fileType: undefined,
-      enableHeader: undefined,
-      enableFooter: undefined
-    })).toEqual({
-      ...randomState,
-      config, fileType, enableHeader, enableFooter
-    })
-  })
-
   it('should ignore extra properties', () => {
     expect(reducer(randomState, {
       type:actConstants.INIT,
@@ -112,13 +97,6 @@ describe('handle CHANGE_VIEW_TYPE action', () => {
       type: actConstants.CHANGE_VIEW_TYPE,
       viewType: 'grid',
     })).toEqual({ ...randomState, viewType: 'grid' })
-  })
-
-  it('should set default value for undefined property', () => {
-    expect(reducer(randomState, {
-      type: actConstants.CHANGE_VIEW_TYPE,
-      viewType: undefined
-    })).toEqual({ ...randomState, viewType: initialState.viewType })
   })
 
   it('should ignore extra properties', () => {
@@ -163,13 +141,6 @@ describe('handle SHOW_MESSAGE action', () => {
     })
   })
 
-  it('should set default value for undefined property', () => {
-    expect(reducer(randomState, {
-      type: actConstants.SHOW_MESSAGE,
-      message: undefined
-    })).toEqual({ ...randomState, messages: [ ...messages, defaultMessage ] })
-  })
-
   it('should ignore extra property', () => {
     expect(reducer(randomState, {
       type: actConstants.SHOW_MESSAGE,
@@ -209,13 +180,6 @@ describe('handle HIDE_MESSAGE action', () => {
     })).toEqual({ randomState, messages: [] })
   })
 
-  it('should ignore undefined property', () => {
-    expect(reducer(randomState, {
-      type: actConstants.HIDE_MESSAGE,
-      message: undefined
-    })).toEqual(randomState)
-  })
-
   it('should ignore extra property', () => {
     expect(reducer(randomState, {
       type: actConstants.SHOW_MESSAGE,
@@ -232,13 +196,6 @@ describe('handle GET_PATH_FROM_LOCAL action', () => {
       type: actConstants.GET_PATH_FROM_LOCAL,
       localPath: '/'
     })).toEqual({ ...randomState, localPath: '/' })
-  })
-
-  it('should set default value for undefined property', () => {
-    expect(reducer(randomState, {
-      type: actConstants.GET_PATH_FROM_LOCAL,
-      localPath: undefined
-    })).toEqual({ ...randomState, localPath: initialState.localPath })
   })
 
   it('should ignore extra property', () => {

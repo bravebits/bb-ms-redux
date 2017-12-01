@@ -13,8 +13,9 @@ import * as libs from '../libs/libs'
 
 class MainScreen extends Component {
 	render() {
-		const { files, viewType, searchResults } = this.props
-		const displayItems = _.isEmpty(searchResults) ? files : searchResults
+		const { treeNodes, viewType, searchString, currentPath } = this.props
+		const files = libs.getNodeByPath(treeNodes, currentPath).children
+		const displayItems = _.filter(files, file => libs.simpleMatch(file.name, searchString))
 		return (
 			<div
 				className={`${css['box__content']} ${css['box__media']} ${css[
@@ -57,9 +58,10 @@ class MainScreen extends Component {
 
 function mapStateToProps(state) {
 	return {
-		files: state.fileReducer.files,
+		treeNodes: state.fileReducer.treeNodes,
 		viewType: state.generalReducer.viewType,
-		searchResults: state.fileReducer.searchResults
+		searchString: state.fileReducer.searchString,
+		currentPath: state.fileReducer.currentPath
 	}
 }
 

@@ -7,7 +7,7 @@ import TreeNode from './TreeNode'
 
 class SideBar extends Component {
 	render() {
-		const { isSidebarHidden } = this.props
+		const { isSidebarHidden, treeNodes } = this.props
 		return (
 			<div
 				className={`${css['div-parent-tree-view']} ${isSidebarHidden
@@ -16,10 +16,8 @@ class SideBar extends Component {
 			>
 				<div className={`${css['tree-view']}`}>
 					<TreeNode
-						path={'/'}
-						name={'images'}
-						type={'dir'}
-						key={'images'}
+						path="/"
+						{...treeNodes}
 					/>
 				</div>
 			</div>
@@ -29,7 +27,8 @@ class SideBar extends Component {
 
 function mapStateToProps(state) {
 	return {
-		isSidebarHidden: state.generalReducer.isSidebarHidden
+		isSidebarHidden: state.generalReducer.isSidebarHidden,
+		treeNodes: state.fileReducer.treeNodes
 	}
 }
 
