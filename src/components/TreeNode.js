@@ -21,10 +21,9 @@ class TreeNode extends Component {
 	toggleTreeNode = e => {
 		e.stopPropagation()
 		if (!this.props.isExpanded) {
-			this.props.expandTreeNode(
+			this.props.checkAndExpand(
 				this.props.path,
-				this.props.config.getAllFiles,
-				this.props.treeNodes
+				this.props.config.getAllFiles
 			)
 		}
 		else {

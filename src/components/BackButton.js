@@ -14,8 +14,8 @@ class BackButton extends Component {
 	}
 
 	render() {
-		const { currentPath } = this.props
-		return currentPath !== '/'
+		const { currentPath, root } = this.props
+		return currentPath !== root
 			? <div
 					onClick={this.goBack}
 					className={`${css['list-media__item']} ${css['back-button']}`}
@@ -43,7 +43,8 @@ class BackButton extends Component {
 function mapStateToProps(state) {
 	return {
 		config: state.generalReducer.config,
-		currentPath: state.fileReducer.currentPath
+		currentPath: state.fileReducer.currentPath,
+		root: state.fileReducer.root
 	}
 }
 

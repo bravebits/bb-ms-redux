@@ -2,16 +2,17 @@ import reducer from '../../reducers/file-reducer'
 import * as actConstants from '../../constants/actions'
 
 const initialState = {
-  selectedFile: '',
-  selectedFiles: [],
-  chosenFile: '',
-  treeNodes: {
-    isExpanded: false,
-    name: 'images',
-    type: 'dir'
-  },
-  currentPath: '/',
-  searchString: ''
+	selectedFile: '',
+	selectedFiles: [],
+	chosenFile: '',
+	treeNodes: {
+		isExpanded: false,
+		name: '/',
+		type: 'dir'
+	},
+	root: '/',
+	currentPath: '/',
+	searchString: ''
 }
 
 const randomState = {
@@ -376,14 +377,16 @@ describe('handle DELETE_FILES_SUCCESS action', () => {
 })
 
 describe('handle CHECK_ALL action', () => {
-  const currentPath = '/New folder/'
-  const selectedFiles = sampleFiles.map(file => currentPath + file.name)
-
   it('should add all files to selectedFiles array', () => {
     const newState = reducer(randomState, {
       type: actConstants.CHECK_ALL
     })
-    expect(newState.selectedFiles).toEqual(randomState.treeNodes.children[0].children)
+    const currentNode = randomState.treeNodes.children[0]
+    expect(newState.selectedFiles).toHaveLength(currentNode.children.length)
+    currentNode.children.forEach(child => {
+      expect(newState.selectedFiles)
+      .toContainEqual(randomState.currentPath + child.name)
+    })
   })
 
   it('should ignore extra properties', () => {

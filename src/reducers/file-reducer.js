@@ -10,9 +10,10 @@ const defaultState = {
 	chosenFile: '',
 	treeNodes: {
 		isExpanded: false,
-		name: 'images',
+		name: '/',
 		type: 'dir'
 	},
+	root: '/',
 	currentPath: '/',
 	searchString: ''
 }
@@ -75,7 +76,8 @@ export default function(state = defaultState, action) {
 			newState.selectedFiles = []
 			return newState
 		case actConstants.CHECK_ALL:
-			newState.selectedFiles = libs.getNodeByPath(cloneTreeNodes, state.currentPath).children
+			const files = libs.getNodeByPath(cloneTreeNodes, state.currentPath).children
+			newState.selectedFiles = _.map(files, file => state.currentPath + file.name)
 			return newState
 		case actConstants.UNCHECK_ALL:
 			cloneSelectedFiles.length = 0
@@ -102,6 +104,9 @@ export default function(state = defaultState, action) {
 				return file.name !== action.name
 			})
 			newState.treeNodes = cloneTreeNodes
+			return newState
+		case actConstants.SET_ROOT:
+			newState.root = action.path
 			return newState
 		default:
 			return newState

@@ -1,5 +1,5 @@
 import css from '../styles/index.css'
-import { each, find, filter } from 'underscore'
+import { each, find, filter, reduce } from 'underscore'
 
 export function mapViewType(viewType) {
 	switch (viewType) {
@@ -62,4 +62,14 @@ export function setNodeChildren(node, files) {
 
 export function simpleMatch(str, term) {
 	return str.toUpperCase().includes(term.toUpperCase())
+}
+
+export function getParamsFromURL() {
+	const paramsList = window.location.search.substr(1).split('&')
+	return reduce(paramsList, (result, item) => {
+		let key, value
+		[key, value] = item.split('=')
+		result[key] = value
+		return result
+	}, {})
 }

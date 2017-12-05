@@ -4,13 +4,26 @@ import _ from 'underscore'
 import * as generalConstants from '../constants/general'
 import * as libs from '../libs/libs'
 
-export function init(c, ft, eH, eF) {
-	return {
-		type: actConstants.INIT,
-		config: c,
-		fileType: ft,
-		enableHeader: eH,
-		enableFooter: eF
+export function init(options) {
+	const { config, fileType, enableHeader, enableFooter } = options
+	const { root, path, selected } = options
+
+	return dispatch => {
+		dispatch({
+			type: actConstants.INIT,
+			config, fileType, enableHeader, enableFooter
+		})
+
+		_.reduce(path.split('/').slice(0, -1), (path, dir) => {
+			path += dir + '/'
+			dispatch(getAllFiles(path, config.getAllFiles))
+			selected && dispatch(expandTreeNode(path))
+			return path
+		}, '')
+
+		root &&	dispatch(setRoot(root))
+		dispatch(setCurrentPath(path))
+		dispatch(selectFile(selected))
 	}
 }
 
@@ -23,7 +36,6 @@ export function getAllFiles(path, endPoint) {
 				files: JSON.parse(res)
 			})
 		})
-		return Promise.resolve()
 	}
 }
 
@@ -34,22 +46,27 @@ export function setCurrentPath(path) {
 	}
 }
 
-export const fetchFiles = (path, endPoint) => {
+export function fetchFiles(path, endPoint) {
 	return dispatch => {
 		dispatch(getAllFiles(path, endPoint))
 		dispatch(setCurrentPath(path))
 	}
 }
 
-export function expandTreeNode(path, endPoint, treeNodes) {
-	return dispatch => {
+export function expandTreeNode(path) {
+	return {
+		type: actConstants.EXPAND_TREE_NODE,
+		path: path
+	}
+}
+
+export function checkAndExpand(path, endPoint) {
+	return (dispatch, getState) => {
+		const { treeNodes } = getState().fileReducer
 		if (libs.getNodeByPath(treeNodes, path).children === undefined) {
 			dispatch(getAllFiles(path, endPoint))
 		}
-		dispatch({
-			type: actConstants.EXPAND_TREE_NODE,
-			path: path
-		})
+		dispatch(expandTreeNode(path))
 	}
 }
 
@@ -520,5 +537,12 @@ export function resetFolderName(el, name) {
 	el.innerText = name
 	return {
 		type: actConstants.RESET_FILE_NAME
+	}
+}
+
+export function setRoot(path) {
+	return {
+		type: actConstants.SET_ROOT,
+		path
 	}
 }
