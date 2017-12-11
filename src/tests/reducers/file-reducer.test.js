@@ -2,9 +2,9 @@ import reducer from '../../reducers/file-reducer'
 import * as actConstants from '../../constants/actions'
 
 const initialState = {
-	selectedFile: '',
+	selectedFile: null,
 	selectedFiles: [],
-	chosenFile: '',
+	chosenFile: null,
 	treeNodes: {
 		isExpanded: false,
 		name: '/',
@@ -12,7 +12,8 @@ const initialState = {
 	},
 	root: '/',
 	currentPath: '/',
-	searchString: ''
+	searchString: '',
+	type: ''
 }
 
 const randomState = {

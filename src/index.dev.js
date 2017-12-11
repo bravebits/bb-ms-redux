@@ -13,17 +13,19 @@ const store = createStore(
 	applyMiddleware(logger, thunk)
 )
 
+const params='option=com_ajax&plugin=pagebuilder3&format=json'
+
 const config = {
 	baseURL: 'http://pb.box/dev/',
-	getAllFiles: 'http://pb.box/dev/index.php?pb3ajax=1&task=getListFiles',
+	getAllFiles: `http://pb.box/dev/index.php?${params}&task=getListFiles`,
 	getFullDirectory:
-		'http://pb.box/dev/index.php?pb3ajax=1&task=getFullDirectory',
-	uploadFile: 'http://pb.box/dev/index.php?pb3ajax=1&task=uploadFile',
-	createFolder: 'http://pb.box/dev/index.php?pb3ajax=1&task=createFolder',
-	deleteFolder: 'http://pb.box/dev/index.php?pb3ajax=1&task=deleteFolder',
-	deleteFile: 'http://pb.box/dev/index.php?pb3ajax=1&task=deleteFile',
-	renameFolder: 'http://pb.box/dev/index.php?pb3ajax=1&task=renameFolder',
-	renameFile: 'http://pb.box/dev/index.php?pb3ajax=1&task=renameFile'
+		`http://pb.box/dev/index.php?${params}&task=getFullDirectory`,
+	uploadFile: `http://pb.box/dev/index.php?${params}&task=uploadFile`,
+	createFolder: `http://pb.box/dev/index.php?${params}&task=createFolder`,
+	deleteFolder: `http://pb.box/dev/index.php?${params}&task=deleteFolder`,
+	deleteFile: `http://pb.box/dev/index.php?${params}&task=deleteFile`,
+	renameFolder: `http://pb.box/dev/index.php?${params}&task=renameFolder`,
+	renameFile: `http://pb.box/dev/index.php?${params}&task=renameFile`
 }
 
 render(

@@ -4,9 +4,9 @@ import $ from 'jquery'
  * @param path
  * @return {$.ajax}: Use .done(res => {}) to handle this ajax request
  */
-export const getAllFiles = (path = '/', endPoint) => 
+export const getAllFiles = (path = '/', endPoint, type) =>
 	$.ajax({
-		url: `${endPoint}&dir=${path === '' ? '/' : path}`
+		url: `${endPoint}&dir=${path === '' ? '/' : path}&type=${type}`
 	})
 
 export const getFullDirectory = (endPoint, path = '/') =>
@@ -64,7 +64,7 @@ export const uploadFile = (endPoint, data, resolve, reject, times) => {
 			reject(res)
 		},
 		success: res => {
-			if (res.message == 'Filename already exists!') {
+			if (res.data[0].message == 'Filename already exists!') {
 				times++
 				if (times > 1) {
 					data.filename = data.filename.replace(`(${times - 1})`, '')

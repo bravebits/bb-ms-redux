@@ -16,8 +16,10 @@ class App extends Component {
 		const path = selected? selected.substring(0, selected.lastIndexOf('/') + 1)
 			: libs.getPathFromLocal()
 		const initOptions = {
-			config, fileType, enableFooter, enableHeader, path, selected,
-			root: folder
+			config, fileType, enableFooter, enableHeader, type,
+			root: libs.standardizedPath(folder, 'dir'),
+			path: libs.standardizedPath(path, 'dir'),
+			selected: libs.standardizedPath(selected, 'file')
 		}
 
 		this.props.init(initOptions)

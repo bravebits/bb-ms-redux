@@ -5,9 +5,9 @@ import * as libs from '../libs/libs'
 import { extend } from 'jquery'
 
 const defaultState = {
-	selectedFile: '',
+	selectedFile: null,
 	selectedFiles: [],
-	chosenFile: '',
+	chosenFile: null,
 	treeNodes: {
 		isExpanded: false,
 		name: '/',
@@ -15,7 +15,8 @@ const defaultState = {
 	},
 	root: '/',
 	currentPath: '/',
-	searchString: ''
+	searchString: '',
+	fileType: ''
 }
 
 export default function(state = defaultState, action) {
@@ -107,6 +108,9 @@ export default function(state = defaultState, action) {
 			return newState
 		case actConstants.SET_ROOT:
 			newState.root = action.path
+			return newState
+		case actConstants.SET_FILE_TYPE:
+			newState.fileType = action.fileType
 			return newState
 		default:
 			return newState
