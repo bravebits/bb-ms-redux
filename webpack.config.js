@@ -20,9 +20,7 @@ module.exports = {
 		'react': 'react',
 		'react-dom': 'react-dom',
 		'jquery': 'jquery',
-		'underscore': 'underscore',
-		'redux': 'redux',
-		'prop-types': 'prop-types'
+		'underscore': 'underscore'
 	},
 
 	devServer: {

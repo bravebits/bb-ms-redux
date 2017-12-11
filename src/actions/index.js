@@ -110,7 +110,6 @@ export function onUploadSuccess(f) {
 export function handleUploadFile(path, endPoint, file, endPointFetchFiles) {
 	return function(dispatch) {
 		joomlaApi.handleUploadFile(path, endPoint, file).then(res => {
-			console.log(res)
 			if (res && res.success) {
 				dispatch(getAllFiles(path, endPointFetchFiles))
 				// get the info of the latest upload file
