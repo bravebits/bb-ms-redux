@@ -11,31 +11,19 @@ import * as libs from '../libs/libs'
 
 class App extends Component {
 	componentWillMount() {
-		this.initApp().then(() => {
-			this.fetchFiles()
-		})
-	}
+		const { config, fileType, enableFooter, enableHeader } = this.props
+		const { folder, selected, type } = libs.getParamsFromURL()
+		const path = selected? selected.substring(0, selected.lastIndexOf('/') + 1)
+			: libs.getPathFromLocal()
+		const initOptions = {
+			config, fileType, enableFooter, enableHeader, type,
+			root: libs.standardizedPath(folder, 'dir'),
+			path: libs.standardizedPath(path, 'dir'),
+			selected: libs.standardizedPath(selected, 'file')
+		}
 
-	initApp() {
-		return new Promise((resolve, reject) => {
-			this.props.init(
-				this.props.config,
-				this.props.fileType,
-				this.props.enableHeader,
-				this.props.enableFooter
-			)
-			resolve()
-		})
-	}
-
-	fetchFiles() {
-		this.props.getPathFromLocal()
-		return new Promise(resolve => {
-			this.props.fetchFiles(
-				this.props.localPath,
-				this.props.config.getAllFiles
-			)
-		})
+		this.props.init(initOptions)
+		selected && libs.setPathToLocal(path)
 	}
 
 	render() {
@@ -61,9 +49,7 @@ class App extends Component {
 
 function mapStateToProps(state) {
 	return {
-		files: state.fileReducer.files,
-		isSidebarHidden: state.generalReducer.isSidebarHidden,
-		localPath: state.generalReducer.localPath
+		isSidebarHidden: state.generalReducer.isSidebarHidden
 	}
 }
 

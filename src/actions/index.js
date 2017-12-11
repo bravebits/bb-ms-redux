@@ -4,46 +4,79 @@ import _ from 'underscore'
 import * as generalConstants from '../constants/general'
 import * as libs from '../libs/libs'
 
-export function getAllFiles(p, f) {
-	return {
-		type: actConstants.GET_ALL_FILES,
-		path: p,
-		files: f
-	}
-}
+export function init(options) {
+	const { config, fileType, enableHeader, enableFooter } = options
+	const { root, path, selected, type } = options
 
-export function init(c, ft, eH, eF) {
-	return {
-		type: actConstants.INIT,
-		config: c,
-		fileType: ft,
-		enableHeader: eH,
-		enableFooter: eF
-	}
-}
-
-export const fetchFiles = (path, endPoint) => {
 	return dispatch => {
-		joomlaApi.getAllFiles(path, endPoint).done(res => {
-			dispatch(getAllFiles(path, JSON.parse(res)))
-			dispatch(expandTreeNode(path, endPoint, () => {}, () => {}))
+		dispatch({
+			type: actConstants.INIT,
+			config, fileType, enableHeader, enableFooter
+		})
+		type && dispatch(setFileType(type))
+
+		_.reduce(path.split('/').slice(0, -1), (path, dir) => {
+			path += dir + '/'
+			dispatch(getAllFiles(path, config.getAllFiles))
+			selected && dispatch(expandTreeNode(path))
+			return path
+		}, '')
+
+		root &&	dispatch(setRoot(root))
+		dispatch(setCurrentPath(path))
+		dispatch(selectFile(selected))
+	}
+}
+
+export function getAllFiles(path, endPoint) {
+	return (dispatch, getState) => {
+		const { fileType } = getState().fileReducer
+
+		joomlaApi.getAllFiles(path, endPoint, fileType).done(res => {
+			dispatch({
+				type:actConstants.GET_ALL_FILES,
+				path,
+				files: res.data[0]
+			})
 		})
 	}
 }
 
-export function expandTreeNodeSuccess(t) {
+export function setCurrentPath(path) {
 	return {
-		type: actConstants.EXPAND_TREE_NODE_SUCCESS,
-		treeNodes: t
+		type: actConstants.SET_CURRENT_PATH,
+		path
 	}
 }
 
-export function expandTreeNode(path, endPoint, resolve, reject) {
-	return function(dispatch) {
-		joomlaApi.getAllFiles(path, endPoint).done(res => {
-			dispatch(expandTreeNodeSuccess(JSON.parse(res)))
-			resolve(JSON.parse(res))
-		})
+export function fetchFiles(path, endPoint) {
+	return dispatch => {
+		dispatch(getAllFiles(path, endPoint))
+		dispatch(setCurrentPath(path))
+	}
+}
+
+export function expandTreeNode(path) {
+	return {
+		type: actConstants.EXPAND_TREE_NODE,
+		path: path
+	}
+}
+
+export function checkAndExpand(path, endPoint) {
+	return (dispatch, getState) => {
+		const { treeNodes } = getState().fileReducer
+		if (libs.getNodeByPath(treeNodes, path).children === undefined) {
+			dispatch(getAllFiles(path, endPoint))
+		}
+		dispatch(expandTreeNode(path))
+	}
+}
+
+export function collapseTreeNode(path) {
+	return {
+		type: actConstants.COLLAPSE_TREE_NODE,
+		path: path
 	}
 }
 
@@ -60,16 +93,10 @@ export function toggleSidebar() {
 	}
 }
 
-export function searchInFolder(k) {
+export function updateSearchString(k) {
 	return {
-		type: actConstants.SEARCH_IN_FOLDER,
+		type: actConstants.UPDATE_SEARCH_STRING,
 		keyWord: k
-	}
-}
-
-export function clearSearchResults() {
-	return {
-		type: actConstants.CLEAR_SEARCH_RESULTS
 	}
 }
 
@@ -84,8 +111,8 @@ export function handleUploadFile(path, endPoint, file, endPointFetchFiles) {
 	return function(dispatch) {
 		joomlaApi.handleUploadFile(path, endPoint, file).then(res => {
 			console.log(res)
-			if (res && res.message === 'done') {
-				dispatch(fetchFiles(path, endPointFetchFiles))
+			if (res && res.success) {
+				dispatch(getAllFiles(path, endPointFetchFiles))
 				// get the info of the latest upload file
 				// normal case, if there's only one unique file uploaded, we just need to filter and get info by its name
 				// but if there are duplicated files like: image.png and image(1).png, (1) here is added by server
@@ -175,7 +202,7 @@ export function createFolder(path, endPoint, files) {
 		: ''}`
 	return function(dispatch) {
 		joomlaApi.createFolder(endPoint, path, name).done(res => {
-			const result = JSON.parse(res)
+			const result = res.data[0]
 			if (result.success) {
 				const folder = {
 					name: name,
@@ -208,7 +235,7 @@ export function renameFolder(endPoint, path, newPath, currentPath) {
 			const oldName = path.replace(currentPath, '')
 			const newName = newPath.replace(currentPath, '')
 			joomlaApi.renameFolder(endPoint, path, newPath).done(res => {
-				const result = JSON.parse(res)
+				const result = res.data[0]
 				if (result.success) {
 					dispatch(onRenameFolderSuccess(oldName, newName))
 					dispatch(
@@ -247,7 +274,7 @@ export function renameFile(endPoint, path, newPath, currentPath) {
 			const oldName = path.replace(currentPath, '')
 			const newName = newPath.replace(currentPath, '')
 			joomlaApi.renameFile(endPoint, path, newPath).done(res => {
-				const result = JSON.parse(res)
+				const result = res.data[0]
 				if (result.success) {
 					dispatch(onRenameFileSuccess(oldName, newName))
 					dispatch(
@@ -294,7 +321,7 @@ export function selectFile(p) {
 export function onDeleteFileSuccess(fn) {
 	return {
 		type: actConstants.DELETE_FILE_SUCCESS,
-		fileName: fn
+		name: fn
 	}
 }
 
@@ -303,7 +330,7 @@ export function deleteFile(path, endPoint, currentPath, mode) {
 		const fileName = path.replace(currentPath, '')
 		if (mode === 'multi') {
 			joomlaApi.deleteFile(endPoint, path).done(res => {
-				const result = JSON.parse(res)
+				const result = res.data[0]
 				if (result.success) {
 					dispatch(onDeleteFileSuccess(fileName))
 				}
@@ -312,7 +339,7 @@ export function deleteFile(path, endPoint, currentPath, mode) {
 			const cResult = confirm('Are you sure you want to delete?')
 			if (cResult) {
 				joomlaApi.deleteFile(endPoint, path).done(res => {
-					const result = JSON.parse(res)
+					const result = res.data[0]
 					if (result.success) {
 						dispatch(onDeleteFileSuccess(fileName))
 						dispatch(
@@ -332,7 +359,7 @@ export function deleteFile(path, endPoint, currentPath, mode) {
 export function onDeleteFolderSuccess(fn) {
 	return {
 		type: actConstants.DELETE_FOLDER_SUCCESS,
-		folderName: fn
+		name: fn
 	}
 }
 
@@ -341,7 +368,7 @@ export function deleteFolder(path, endPoint, currentPath, mode) {
 		const folderName = path.replace(currentPath, '')
 		if (mode === 'multi') {
 			joomlaApi.deleteFolder(endPoint, path).done(res => {
-				const result = JSON.parse(res)
+				const result = res.data[0]
 				if (result.success) {
 					dispatch(onDeleteFolderSuccess(folderName))
 				}
@@ -350,7 +377,7 @@ export function deleteFolder(path, endPoint, currentPath, mode) {
 			const cResult = confirm('Are you sure you want to delete?')
 			if (cResult) {
 				joomlaApi.deleteFolder(endPoint, path).done(res => {
-					const result = JSON.parse(res)
+					const result = res.data[0]
 					if (result.success) {
 						dispatch(onDeleteFolderSuccess(folderName))
 						dispatch(
@@ -474,12 +501,9 @@ export function onCancel() {
 	}
 }
 
-export function checkAll(cp, fs, ft) {
+export function checkAll() {
 	return {
 		type: actConstants.CHECK_ALL,
-		currentPath: cp,
-		files: fs,
-		fileType: ft
 	}
 }
 
@@ -516,5 +540,19 @@ export function resetFolderName(el, name) {
 	el.innerText = name
 	return {
 		type: actConstants.RESET_FILE_NAME
+	}
+}
+
+export function setRoot(path) {
+	return {
+		type: actConstants.SET_ROOT,
+		path
+	}
+}
+
+export function setFileType(fileType) {
+	return {
+		type: actConstants.SET_FILE_TYPE,
+		fileType: fileType
 	}
 }

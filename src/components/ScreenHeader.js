@@ -12,11 +12,7 @@ class ScreenHeader extends Component {
 		e.stopPropagation()
 		const isAllChecked = e.target.checked
 		if (isAllChecked) {
-			this.props.checkAll(
-				this.props.currentPath,
-				this.props.files,
-				this.props.fileType
-			)
+			this.props.checkAll()
 		} else {
 			this.props.uncheckAll()
 		}
@@ -61,9 +57,7 @@ class ScreenHeader extends Component {
 function mapStateToProps(state) {
 	return {
 		selectedFiles: state.fileReducer.selectedFiles,
-		files: state.fileReducer.files,
-		currentPath: state.fileReducer.currentPath,
-		fileType: state.generalReducer.fileType
+		files: libs.getNodeByPath(state.fileReducer.treeNodes, state.fileReducer.currentPath).children,
 	}
 }
 

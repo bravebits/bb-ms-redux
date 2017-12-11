@@ -2,48 +2,60 @@ import * as actConstants from '../constants/actions'
 import _ from 'underscore'
 import * as generalConstants from '../constants/general'
 import * as libs from '../libs/libs'
+import { extend } from 'jquery'
 
 const defaultState = {
-	selectedFile: '',
+	selectedFile: null,
 	selectedFiles: [],
-	chosenFile: '',
-	treeNodes: [],
-	files: [],
+	chosenFile: null,
+	treeNodes: {
+		isExpanded: false,
+		name: '/',
+		type: 'dir'
+	},
+	root: '/',
 	currentPath: '/',
-	searchResults: []
+	searchString: '',
+	fileType: ''
 }
 
 export default function(state = defaultState, action) {
 	// it is very important to clone the object || array
 	// otherwise the prevState will be equal with nextState => not update
 	const newState = Object.assign({}, state)
+	const cloneTreeNodes = extend(true, {}, state.treeNodes)
 	const cloneSelectedFiles = state.selectedFiles.slice(0)
-	const cloneFiles = state.files.slice(0)
 	// ============== //
-	newState.selectedFile = null
+	let node
 	switch (action.type) {
 		case actConstants.GET_ALL_FILES:
-			newState.files = action.files
+			node = libs.getNodeByPath(cloneTreeNodes, action.path)
+			libs.setNodeChildren(node, action.files)
+			newState.treeNodes = cloneTreeNodes
+			return newState
+		case actConstants.SET_CURRENT_PATH:
 			newState.currentPath = action.path
-			newState.searchResults = []
 			newState.selectedFiles = []
+			newState.selectedFile = null
+			newState.searchString = ''
 			return newState
-		case actConstants.EXPAND_TREE_NODE_SUCCESS:
-			newState.treeNodes = action.treeNodes
+		case actConstants.EXPAND_TREE_NODE:
+			libs.getNodeByPath(cloneTreeNodes, action.path).isExpanded = true
+			newState.treeNodes = cloneTreeNodes
 			return newState
-		case actConstants.SEARCH_IN_FOLDER:
-			newState.searchResults = _.filter(state.files, file => {
-				return file.name.indexOf(action.keyWord) >= 0
-			})
+		case actConstants.COLLAPSE_TREE_NODE:
+			libs.getNodeByPath(cloneTreeNodes, action.path).isExpanded = false
+			newState.treeNodes = cloneTreeNodes
+			return newState
+		case actConstants.UPDATE_SEARCH_STRING:
+			newState.searchString = action.keyWord
 			newState.selectedFiles = []
-			return newState
-		case actConstants.CLEAR_SEARCH_RESULTS:
-			newState.searchResults = []
-			newState.selectedFiles = []
+			newState.selectedFile = null
 			return newState
 		case actConstants.CHOOSE_FILE:
 			newState.chosenFile = action.path
 			newState.selectedFiles = []
+			newState.selectedFile = null
 			return newState
 		case actConstants.SELECT_FILE:
 			newState.selectedFile = action.path
@@ -52,6 +64,7 @@ export default function(state = defaultState, action) {
 		case actConstants.SELECT_MULTI_FILE_ADD:
 			cloneSelectedFiles.push(action.path)
 			newState.selectedFiles = cloneSelectedFiles
+			newState.selectedFile = null
 			return newState
 		case actConstants.SELECT_MULTI_FILE_REMOVE:
 			cloneSelectedFiles.splice(
@@ -64,9 +77,8 @@ export default function(state = defaultState, action) {
 			newState.selectedFiles = []
 			return newState
 		case actConstants.CHECK_ALL:
-			newState.selectedFiles = _.map(action.files, child => {
-				return action.currentPath + child.name
-			})
+			const files = libs.getNodeByPath(cloneTreeNodes, state.currentPath).children
+			newState.selectedFiles = _.map(files, file => state.currentPath + file.name)
 			return newState
 		case actConstants.UNCHECK_ALL:
 			cloneSelectedFiles.length = 0
@@ -74,34 +86,31 @@ export default function(state = defaultState, action) {
 			return newState
 		case actConstants.CREATE_FOLDER_SUCCESS:
 		case actConstants.UPLOAD_SUCCESS:
-			cloneFiles.push(action.file)
-			newState.files = cloneFiles
+			libs.getNodeByPath(cloneTreeNodes, state.currentPath).children.push(action.file)
+			newState.treeNodes = cloneTreeNodes
 			return newState
 		case actConstants.RENAME_FOLDER_SUCCESS:
-			_.each(cloneFiles, folder => {
-				if (folder.name === action.oldName) {
-					folder.name = action.newName
-				}
-			})
-			newState.files = cloneFiles
-			return newState
 		case actConstants.RENAME_FILE_SUCCESS:
-			_.each(cloneFiles, file => {
+			_.each(libs.getNodeByPath(cloneTreeNodes, state.currentPath).children, file => {
 				if (file.name === action.oldName) {
 					file.name = action.newName
 				}
 			})
-			newState.files = cloneFiles
-			return newState
-		case actConstants.DELETE_FILE_SUCCESS:
-			newState.files = _.filter(cloneFiles, file => {
-				return file.name !== action.fileName
-			})
+			newState.treeNodes = cloneTreeNodes
 			return newState
 		case actConstants.DELETE_FOLDER_SUCCESS:
-			newState.files = _.filter(cloneFiles, folder => {
-				return folder.name !== action.folderName
+		case actConstants.DELETE_FILE_SUCCESS:
+			node = libs.getNodeByPath(cloneTreeNodes, state.currentPath)
+			node.children = _.filter(node.children, file => {
+				return file.name !== action.name
 			})
+			newState.treeNodes = cloneTreeNodes
+			return newState
+		case actConstants.SET_ROOT:
+			newState.root = action.path
+			return newState
+		case actConstants.SET_FILE_TYPE:
+			newState.fileType = action.fileType
 			return newState
 		default:
 			return newState

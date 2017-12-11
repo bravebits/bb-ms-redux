@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import $ from 'jquery'
 import _ from 'underscore'
+import { getNodeByPath } from '../libs/libs'
 
 class NavBar extends Component {
 	componentWillMount = () => {
@@ -26,18 +27,14 @@ class NavBar extends Component {
 	}
 
 	onSearch = e => {
-		if (!_.isEmpty(e.target.value)) {
-			this.props.searchInFolder(e.target.value)
-		} else {
-			this.props.clearSearchResults()
-		}
+		this.props.updateSearchString(e.target.value)
 	}
 
 	createFolder = () => {
 		this.props.createFolder(
 			this.props.currentPath,
 			this.props.config.createFolder,
-			this.props.files
+			getNodeByPath(this.props.treeNodes, this.props.currentPath).children
 		)
 	}
 
@@ -146,6 +143,7 @@ class NavBar extends Component {
 								className={`jsn-form-control`}
 								placeholder="Search"
 								onChange={this.onSearch}
+								value={this.props.searchString}
 							/>
 						</div>
 					</div>
@@ -156,12 +154,13 @@ class NavBar extends Component {
 }
 function mapStateToProps(state) {
 	return {
-		files: state.fileReducer.files,
 		viewType: state.generalReducer.viewType,
 		config: state.generalReducer.config,
+		fileType: state.generalReducer.fileType,
 		currentPath: state.fileReducer.currentPath,
 		selectedFiles: state.fileReducer.selectedFiles,
-		fileType: state.generalReducer.fileType
+		treeNodes: state.fileReducer.treeNodes,
+		searchString: state.fileReducer.searchString
 	}
 }
 

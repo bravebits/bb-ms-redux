@@ -1,4 +1,5 @@
 import css from '../styles/index.css'
+import { each, find, filter, reduce } from 'underscore'
 
 export function mapViewType(viewType) {
 	switch (viewType) {
@@ -31,4 +32,51 @@ export function getPathFromLocal() {
 	} else {
 		return '/'
 	}
+}
+
+export function getNodeByPath(root, path) {
+	const dirs = filter(path.split('/'), dir => dir)
+	let node = root
+	each(dirs, dir => {
+		if (node.children === undefined) {
+			node.children = [{
+				name: dir
+			}]
+		}
+		const matchChild = find(node.children, child => child.name === dir)
+		if (matchChild) node = matchChild
+	})
+	return node
+}
+
+export function setNodeChildren(node, files) {
+	each(files, file => {
+		const child = find(node.children, child => child.name === file.name)
+		if (child) {
+			file.isExpanded = child.isExpanded
+			file.children = child.children
+		}
+	})
+	node.children = files
+}
+
+export function simpleMatch(str, term) {
+	return str.toUpperCase().includes(term.toUpperCase())
+}
+
+export function getParamsFromURL() {
+	const paramsList = window.location.search.substr(1).split('&')
+	return reduce(paramsList, (result, item) => {
+		let key, value
+		[key, value] = item.split('=')
+		result[key] = value
+		return result
+	}, {})
+}
+
+export function standardizedPath(path, type) {
+	if (path === undefined || path === null) return
+	if (path[0] !== '/') path = '/' + path
+	if (type === 'dir' && path[path.length - 1] !== '/') path = path + '/'
+	return path
 }

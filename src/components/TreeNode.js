@@ -7,29 +7,11 @@ import _ from 'underscore'
 import * as libs from '../libs/libs'
 
 /**
- * Partially use redux, 
+ * Partially use redux,
  * with files and api, we GET (modify store) them from store, use redux
  * with {isExpanded} and {children}, those 2 variables does not affect store, do not use redux
  */
 class TreeNode extends Component {
-	constructor(...args) {
-		super(...args)
-		this.state = {
-			isExpanded: false
-		}
-	}
-
-	fetchTreeNodeFiles = () => {
-		return new Promise((resolve, reject) => {
-			this.props.expandTreeNode(
-				this.props.path,
-				this.props.config.getAllFiles,
-				resolve,
-				reject
-			)
-		})
-	}
-
 	browseFiles = () => {
 		const path = this.props.path ? this.props.path : '/'
 		this.props.fetchFiles(path, this.props.config.getAllFiles)
@@ -38,20 +20,19 @@ class TreeNode extends Component {
 
 	toggleTreeNode = e => {
 		e.stopPropagation()
-		if (!this.state.isExpanded) {
-			this.fetchTreeNodeFiles().then(resolve => {
-				this.setState({
-					children: this.props.treeNodes,
-					isExpanded: true
-				})
-			})
-		} else {
-			this.setState({ isExpanded: false })
+		if (!this.props.isExpanded) {
+			this.props.checkAndExpand(
+				this.props.path,
+				this.props.config.getAllFiles
+			)
+		}
+		else {
+			this.props.collapseTreeNode(this.props.path)
 		}
 	}
 
 	render() {
-		if (this.state.isExpanded) {
+		if (this.props.isExpanded) {
 			return (
 				<div>
 					<div
@@ -74,14 +55,12 @@ class TreeNode extends Component {
 						</div>
 					</div>
 					<div className={`${css['tree-view__sub-item']}`}>
-						{_.map(this.state.children, child => {
+						{_.map(this.props.children, child => {
 							return (
-								<TreeNode
-									{...this.props}
+								<ConnectedTreeNode
 									path={`${this.props.path}${child.name}/`}
-									name={child.name}
-									type={child.type}
 									key={child.name}
+									{...child}
 								/>
 							)
 						})}
@@ -129,4 +108,6 @@ function mapDispatchToProps(dispatch) {
 	return bindActionCreators(actions, dispatch)
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(TreeNode)
+const ConnectedTreeNode = connect(mapStateToProps, mapDispatchToProps)(TreeNode)
+
+export default ConnectedTreeNode
