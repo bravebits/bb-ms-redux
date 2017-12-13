@@ -109,6 +109,7 @@ class NavBar extends Component {
 									}}
 									type="file"
 									onChange={this.uploadFile}
+									multiple
 								/>
 								<button
 									id="button-upload"

@@ -10,6 +10,11 @@ import Toast from '../components/Toast'
 import * as libs from '../libs/libs'
 
 class App extends Component {
+	componentDidMount() {
+		document.addEventListener('dragover', (e) => e.preventDefault())
+		document.addEventListener('drop', (e) => e.preventDefault())
+	}
+
 	componentWillMount() {
 		const { config, fileType, enableFooter, enableHeader } = this.props
 		const { folder, selected, type } = libs.getParamsFromURL()
