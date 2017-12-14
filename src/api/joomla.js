@@ -64,7 +64,7 @@ export const uploadFile = (endPoint, data, resolve, reject, times) => {
 			reject(res)
 		},
 		success: res => {
-			if (res.data[0].message == 'Filename already exists!') {
+			if (res.message == 'Filename already exists!') {
 				times++
 				if (times > 1) {
 					data.filename = data.filename.replace(`(${times - 1})`, '')
