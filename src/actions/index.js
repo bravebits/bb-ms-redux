@@ -36,7 +36,7 @@ export function getAllFiles(path, endPoint) {
 			dispatch({
 				type:actConstants.GET_ALL_FILES,
 				path,
-				files: res.data[0]
+				files: JSON.parse(res)
 			})
 		})
 	}
@@ -110,7 +110,7 @@ export function onUploadSuccess(f) {
 export function handleUploadFile(path, endPoint, file, endPointFetchFiles) {
 	return function(dispatch) {
 		joomlaApi.handleUploadFile(path, endPoint, file).then(res => {
-			if (res && res.success) {
+			if (res && res.message === 'done') {
 				dispatch(getAllFiles(path, endPointFetchFiles))
 				// get the info of the latest upload file
 				// normal case, if there's only one unique file uploaded, we just need to filter and get info by its name
@@ -201,7 +201,7 @@ export function createFolder(path, endPoint, files) {
 		: ''}`
 	return function(dispatch) {
 		joomlaApi.createFolder(endPoint, path, name).done(res => {
-			const result = res.data[0]
+			const result = JSON.parse(res)
 			if (result.success) {
 				const folder = {
 					name: name,
@@ -234,7 +234,7 @@ export function renameFolder(endPoint, path, newPath, currentPath) {
 			const oldName = path.replace(currentPath, '')
 			const newName = newPath.replace(currentPath, '')
 			joomlaApi.renameFolder(endPoint, path, newPath).done(res => {
-				const result = res.data[0]
+				const result = JSON.parse(res)
 				if (result.success) {
 					dispatch(onRenameFolderSuccess(oldName, newName))
 					dispatch(
@@ -273,7 +273,7 @@ export function renameFile(endPoint, path, newPath, currentPath) {
 			const oldName = path.replace(currentPath, '')
 			const newName = newPath.replace(currentPath, '')
 			joomlaApi.renameFile(endPoint, path, newPath).done(res => {
-				const result = res.data[0]
+				const result = JSON.parse(res)
 				if (result.success) {
 					dispatch(onRenameFileSuccess(oldName, newName))
 					dispatch(
@@ -329,7 +329,7 @@ export function deleteFile(path, endPoint, currentPath, mode) {
 		const fileName = path.replace(currentPath, '')
 		if (mode === 'multi') {
 			joomlaApi.deleteFile(endPoint, path).done(res => {
-				const result = res.data[0]
+				const result = JSON.parse(res)
 				if (result.success) {
 					dispatch(onDeleteFileSuccess(fileName))
 				}
@@ -338,7 +338,7 @@ export function deleteFile(path, endPoint, currentPath, mode) {
 			const cResult = confirm('Are you sure you want to delete?')
 			if (cResult) {
 				joomlaApi.deleteFile(endPoint, path).done(res => {
-					const result = res.data[0]
+					const result = JSON.parse(res)
 					if (result.success) {
 						dispatch(onDeleteFileSuccess(fileName))
 						dispatch(
@@ -367,7 +367,7 @@ export function deleteFolder(path, endPoint, currentPath, mode) {
 		const folderName = path.replace(currentPath, '')
 		if (mode === 'multi') {
 			joomlaApi.deleteFolder(endPoint, path).done(res => {
-				const result = res.data[0]
+				const result = JSON.parse(res)
 				if (result.success) {
 					dispatch(onDeleteFolderSuccess(folderName))
 				}
@@ -376,7 +376,7 @@ export function deleteFolder(path, endPoint, currentPath, mode) {
 			const cResult = confirm('Are you sure you want to delete?')
 			if (cResult) {
 				joomlaApi.deleteFolder(endPoint, path).done(res => {
-					const result = res.data[0]
+					const result = JSON.parse(res)
 					if (result.success) {
 						dispatch(onDeleteFolderSuccess(folderName))
 						dispatch(
