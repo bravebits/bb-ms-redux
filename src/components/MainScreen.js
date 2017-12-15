@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import css from '../styles/index.css'
 import File from './File'
+import UploadingFile from './UploadingFile'
 import Directory from './Directory'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -31,6 +32,14 @@ class MainScreen extends Component {
 							if (item.type === 'dir') {
 								return (
 									<Directory
+										key={item.name}
+										data={item}
+										isBack={ind % 2 === 0}
+									/>
+								)
+							} else if (item.uploading) {
+								return (
+									<UploadingFile
 										key={item.name}
 										data={item}
 										isBack={ind % 2 === 0}

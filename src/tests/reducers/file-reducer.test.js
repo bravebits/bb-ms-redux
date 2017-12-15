@@ -444,13 +444,21 @@ describe('handle CREATE_FOLDER_SUCCESS action', () => {
 })
 
 describe('handle UPLOAD_SUCCESS action', () => {
-  const sampleFile = sampleFiles[4]
+  const sampleFile = {
+    name: 'file.txt',
+    type: 'file',
+    size: '1.0',
+    image_height: 1020,
+    image_width: 1600
+  }
 
-  it('should add file to treeNodes', () => {
+  it('should change file with the same name in treeNodes', () => {
     const newState = reducer(randomState, {
       type: actConstants.UPLOAD_SUCCESS,
       file: sampleFile
     })
+    expect(newState.treeNodes.children[0].children)
+    .toHaveLength(randomState.treeNodes.children[0].children.length)
     expect(newState.treeNodes.children[0].children).toContain(sampleFile)
   })
 

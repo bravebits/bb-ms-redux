@@ -65,7 +65,7 @@ export function simpleMatch(str, term) {
 }
 
 export function getParamsFromURL() {
-	const paramsList = window.location.search.substr(1).split('&')
+	const paramsList = decodeURI(window.location.search.substr(1)).split('&')
 	return reduce(paramsList, (result, item) => {
 		let key, value
 		[key, value] = item.split('=')

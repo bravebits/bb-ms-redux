@@ -4,6 +4,7 @@ import * as actions from '../actions'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import css from '../styles/index.css'
+import * as libs from '../libs/libs'
 
 class DropZone extends Component {
   static propTypes = {}
@@ -32,14 +33,12 @@ class DropZone extends Component {
   handleDrop = (e) => {
     e.preventDefault()
     const { config, currentPath } = this.props
-    const files = e.dataTransfer.files
+    const uploadFiles = e.dataTransfer.files
 
     this.setState({dragging: false})
-    this.props.handleUploadFile(
-      currentPath,
-      config.uploadFile,
-      files[0],
-      config.getAllFiles
+    this.props.handleUploadFiles(
+      this.props.files,
+      uploadFiles
     )
   }
 
@@ -82,7 +81,8 @@ class DropZone extends Component {
 function mapStateToProps(state) {
   return {
 		config: state.generalReducer.config,
-		currentPath: state.fileReducer.currentPath,
+    currentPath: state.fileReducer.currentPath,
+    files: libs.getNodeByPath(state.fileReducer.treeNodes, state.fileReducer.currentPath).children
   }
 }
 
