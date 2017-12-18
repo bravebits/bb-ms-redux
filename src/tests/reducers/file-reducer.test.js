@@ -443,6 +443,42 @@ describe('handle CREATE_FOLDER_SUCCESS action', () => {
   })
 })
 
+describe('handle ADD_UPLOADING_FILE action', () => {
+  const sampleFile = {
+    name: 'randomName.txt',
+    type: 'file',
+  }
+  const newName = 'randomName(1).txt'
+
+  it('should add an uploading file to treeNodes', () => {
+    const newState = reducer(randomState, {
+      type: actConstants.ADD_UPLOADING_FILE,
+      file: sampleFile,
+      name: newName
+    })
+    expect(newState.treeNodes.children[0].children)
+    .toHaveLength(randomState.treeNodes.children[0].children.length + 1)
+    expect(newState.treeNodes.children[0].children)
+    .toContainEqual(expect.objectContaining({
+      name: newName,
+      type: 'file'
+    }))
+  })
+
+  it('should ignore extra properties', () => {
+    const newState = reducer(randomState, {
+      type: actConstants.ADD_UPLOADING_FILE,
+      file: sampleFile,
+      name: newName,
+      extraProp: 'something',
+      selectedFiles: []
+
+    })
+    expect(newState).not.toHaveProperty('extraProp')
+    expect(newState.selectedFiles).toEqual(randomState.selectedFiles)
+  })
+})
+
 describe('handle UPLOAD_SUCCESS action', () => {
   const sampleFile = {
     name: 'file.txt',
@@ -513,7 +549,7 @@ describe('handle RENAME_FILE_SUCCESS action', () => {
     expect(newState.treeNodes.children[0].children)
     .toHaveLength(randomState.treeNodes.children[0].children.length)
     expect(newState.treeNodes.children[0].children)
-    .toContainEqual(expect.objectContaining({ name: 'new name' }))
+    .toContainEqual(expect.objectContaining({ name: newName }))
   })
 
   it('should ignore extra properties', () => {
