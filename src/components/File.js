@@ -7,6 +7,7 @@ import PropTypes from 'prop-types'
 import * as libs from '../libs/libs'
 import * as generalConstants from '../constants/general'
 import $ from 'jquery'
+import globalVars from '../libs/globalVariables'
 
 class File extends Component {
 	enableEditting = e => {
@@ -30,7 +31,6 @@ class File extends Component {
 		const path = this.props.currentPath + this.props.data.name
 		this.props.deleteFile(
 			path,
-			this.props.config.deleteFile,
 			this.props.currentPath
 		)
 	}
@@ -67,7 +67,6 @@ class File extends Component {
 	handleBlur = e => {
 		this.name.contentEditable = false
 		this.props.renameFile(
-			this.props.config.renameFile,
 			this.props.currentPath + this.props.data.name,
 			this.props.currentPath + e.target.innerText,
 			this.props.currentPath
@@ -115,7 +114,7 @@ class File extends Component {
 						onClick={this.selectFile}
 					>
 						<img
-							src={`${this.props.baseURL}${this.props
+							src={`${globalVars.get('config').baseURL}${this.props
 								.currentPath}${this.props.data.name}`}
 						/>
 					</div>
@@ -145,7 +144,7 @@ class File extends Component {
 					</div>
 				</div>
 			</div>
-		) : this.props.fileType === generalConstants.TYPE_FILE ? (
+		) : globalVars.get('fileType') === generalConstants.TYPE_FILE ? (
 			<div
 				className={`${css['list-media__item']}  ${this.props.isBack
 					? css['back']
@@ -222,10 +221,7 @@ function mapStateToProps(state) {
 	return {
 		currentPath: state.fileReducer.currentPath,
 		selectedFile: state.fileReducer.selectedFile,
-		selectedFiles: state.fileReducer.selectedFiles,
-		config: state.generalReducer.config,
-		baseURL: state.generalReducer.config.baseURL,
-		fileType: state.generalReducer.fileType
+		selectedFiles: state.fileReducer.selectedFiles
 	}
 }
 

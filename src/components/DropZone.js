@@ -80,7 +80,6 @@ class DropZone extends Component {
 
 function mapStateToProps(state) {
   return {
-		config: state.generalReducer.config,
     currentPath: state.fileReducer.currentPath,
     files: libs.getNodeByPath(state.fileReducer.treeNodes, state.fileReducer.currentPath).children
   }

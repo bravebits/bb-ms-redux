@@ -1,24 +1,24 @@
 import $ from 'jquery'
+import globalVars from '../libs/globalVariables'
 /**
- * get all files and directories in images/...
+ * get all files and directories in /...
  * @param path
  * @return {$.ajax}: Use .done(res => {}) to handle this ajax request
  */
-export const getAllFiles = (path = '/', endPoint, type) =>
+export const getAllFiles = (path = '/', type) =>
 	$.ajax({
-		url: `${endPoint}${path === '/' ? '' : '&dir=' + path}&type=${type}`
+		url: `${globalVars.get('config').getAllFiles}${path === '/' ? '' : '&dir=' + path}&type=${type}`
 	})
 
 /**
  * handleUploadFile
  * @param {event|*} e event when file is selected via: onChange={this.handleUpload.bind(this)}
- * @param {string} path directory you want to upload to, default: '(images)/'
+ * @param {string} path directory you want to upload to, default: '/'
  * @param {array} allowType: array of allowed file type name, ex: image
  * @return {Promise}: use .then(res => {}) to handle this.
  */
 export const handleUploadFile = (
 	path = '/',
-	endPoint,
 	file,
 	fileName,
 	onProcess,
@@ -44,16 +44,16 @@ export const handleUploadFile = (
 				filename: fileName,
 				filetype: file.type
 			}
-			uploadFile(endPoint, data, resolve, reject, onProcess)
+			uploadFile(data, resolve, reject, onProcess)
 		}
 	}).catch(err => {
 		console.log('there is an error', err)
 	})
 }
 
-export const uploadFile = (endPoint, data, resolve, reject, onProcess) => {
+export const uploadFile = (data, resolve, reject, onProcess) => {
 	$.ajax({
-		url: `${endPoint}`,
+		url: `${globalVars.get('config').uploadFile}`,
 		type: 'POST',
 		data: data,
 		dataType: 'json',
@@ -77,54 +77,54 @@ export const uploadFile = (endPoint, data, resolve, reject, onProcess) => {
 }
 
 /**
- * create a folder in (images)/...
+ * create a folder in /...
  * @param {string} path: where the new folder will be put
  * @param {string} name: name of the new folder
  * @return {$.ajax} : Use .done(res => {}) to handle this ajax request
  */
-export const createFolder = (endPoint, path = '/', name) =>
+export const createFolder = (path = '/', name) =>
 	$.ajax({
-		url: `${endPoint}${path === '/' ? '' : '&dir=' + path}&name=${name}`
+		url: `${globalVars.get('config').createFolder}${path === '/' ? '' : '&dir=' + path}&name=${name}`
 	})
 
 /**
- * delete a folder in (images)/...
+ * delete a folder in /...
  * @param {string} path: directory folder to be deleted
  * @return {$.ajax} : Use .done(res => {}) to handle this ajax request
  */
-export const deleteFolder = (endPoint, path) =>
+export const deleteFolder = (path) =>
 	$.ajax({
-		url: `${endPoint}&dir=${path}`
+		url: `${globalVars.get('config').deleteFolder}&dir=${path}`
 	})
 
 /**
- * rename a folder in (images)/...
+ * rename a folder in /...
  * @param {string} path: directory name of the folder
  * @param {string} newPath: new path of the new folder
  * @return {$.ajax} : Use .done(res => {}) to handle this ajax request
  */
-export const renameFolder = (endPoint, path, newPath) =>
+export const renameFolder = (path, newPath) =>
 	$.ajax({
-		url: `${endPoint}&dir=${path}&newPath=${newPath}`
+		url: `${globalVars.get('config').renameFolder}&dir=${path}&newPath=${newPath}`
 	})
 
 /**
- * delete a file in (images)/...
+ * delete a file in /...
  * @param {string} filePath: path of file to be deleted
  * @return {$.ajax} : Use .done(res => {}) to handle this ajax request
  */
-export const deleteFile = (endPoint, filePath) =>
+export const deleteFile = (filePath) =>
 	$.ajax({
-		url: `${endPoint}&dir=${filePath}`
+		url: `${globalVars.get('config').deleteFile}&dir=${filePath}`
 	})
 
 /**
- * rename a file in (images)/...
+ * rename a file in /...
  * @param {string} path: directory name of the folder
  * @param {string} newPath: new path of the new folder
  * @return {$.ajax} : Use .done(res => {}) to handle this ajax request
  */
-export const renameFile = (endPoint, path, newPath) =>
+export const renameFile = (path, newPath) =>
 	$.ajax({
-		url: `${endPoint}&dir=${path}&newPath=${newPath}`
+		url: `${globalVars.get('config').renameFile}&dir=${path}&newPath=${newPath}`
 	})

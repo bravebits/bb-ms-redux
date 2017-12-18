@@ -6,11 +6,10 @@ import * as actions from '../actions'
 
 class BackButton extends Component {
 	goBack = () => {
-		const { currentPath, config } = this.props
+		const { currentPath } = this.props
 		const paths = currentPath.split('/')
 		const path = currentPath.replace(`${paths[paths.length - 2]}/`, '')
-		this.props.fetchFiles(path, config.getAllFiles)
-		this.props.setPathToLocal(path)
+		this.props.fetchFiles(path)
 	}
 
 	render() {
@@ -42,7 +41,6 @@ class BackButton extends Component {
 }
 function mapStateToProps(state) {
 	return {
-		config: state.generalReducer.config,
 		currentPath: state.fileReducer.currentPath,
 		root: state.fileReducer.root
 	}

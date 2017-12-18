@@ -4,6 +4,7 @@ import * as actions from '../actions'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import _ from 'underscore'
+import globalVars from '../libs/globalVariables'
 
 class Footer extends Component {
 
@@ -16,9 +17,9 @@ class Footer extends Component {
 	}
 
 	render() {
-		const { selectedFile, enableFooter } = this.props
+		const { selectedFile } = this.props
 
-		if(!enableFooter) {
+		if(!globalVars.get('enableFooter')) {
 			return null
 		}
 
@@ -61,8 +62,7 @@ class Footer extends Component {
 
 function mapStateToProps(state) {
 	return {
-		selectedFile: state.fileReducer.selectedFile,
-		enableFooter: state.generalReducer.enableFooter
+		selectedFile: state.fileReducer.selectedFile
 	}
 }
 

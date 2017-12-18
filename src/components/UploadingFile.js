@@ -14,11 +14,10 @@ class UploadingFile extends Component {
   }
 
   componentDidMount() {
-    const { currentPath, config, data } = this.props
+    const { currentPath, data } = this.props
 
     this.props.handleUploadFile(
       currentPath,
-      config.uploadFile,
       data.uploading,
       data.name,
       (percentage) => this.setState({ uploadPercentage: percentage })
@@ -71,7 +70,6 @@ class UploadingFile extends Component {
 
 function mapStateToProps(state) {
   return {
-    config: state.generalReducer.config,
     currentPath: state.fileReducer.currentPath
   }
 }

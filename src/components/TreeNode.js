@@ -14,17 +14,13 @@ import * as libs from '../libs/libs'
 class TreeNode extends Component {
 	browseFiles = () => {
 		const path = this.props.path ? this.props.path : '/'
-		this.props.fetchFiles(path, this.props.config.getAllFiles)
-		this.props.setPathToLocal(path)
+		this.props.fetchFiles(path)
 	}
 
 	toggleTreeNode = e => {
 		e.stopPropagation()
 		if (!this.props.isExpanded) {
-			this.props.checkAndExpand(
-				this.props.path,
-				this.props.config.getAllFiles
-			)
+			this.props.checkAndExpand(this.props.path)
 		}
 		else {
 			this.props.collapseTreeNode(this.props.path)
@@ -99,7 +95,6 @@ class TreeNode extends Component {
 function mapStateToProps(state) {
 	return {
 		treeNodes: state.fileReducer.treeNodes,
-		config: state.generalReducer.config,
 		currentPath: state.fileReducer.currentPath
 	}
 }
