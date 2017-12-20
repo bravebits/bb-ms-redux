@@ -3,8 +3,9 @@ const express = require('express')
 const app = express()
 const path = require('path')
 
+const indexFile = process.env.NODE_ENV === 'production'? 'index.html' : 'index-dev.html'
 app.get('/', function(req, res) {
-	res.sendFile(path.join(`${__dirname}/public/index-dev.html`))
+	res.sendFile(path.join(`${__dirname}/public/${indexFile}`))
 })
 
 app.use('/lib', express.static(`${__dirname}/lib`))

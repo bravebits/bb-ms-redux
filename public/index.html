@@ -68,17 +68,19 @@
 	//	Replace to your token, get by window.pagefly_data.token
 	const token = '2f61b8170f74bf14d03ecf9e0dc3dca2'
 	const baseURL = 'http://192.168.33.10/dev/'
+  const params='option=com_ajax&plugin=pagebuilder3&format=json'
 	const config = {
 		baseURL,
-		getAllFiles: baseURL + '/index.php?pb3ajax=1&task=getListFiles' + '&' + token + '=1',
-		getFullDirectory: baseURL + '/index.php?pb3ajax=1&task=getFullDirectory' + '&' + token + '=1',
-		uploadFile: baseURL + '/index.php?pb3ajax=1&task=uploadFile' + '&' + token + '=1',
-		createFolder: baseURL + '/index.php?pb3ajax=1&task=createFolder' + '&' + token + '=1',
-		deleteFolder: baseURL + '/index.php?pb3ajax=1&task=deleteFolder' + '&' + token + '=1',
-		deleteFile: baseURL + '/index.php?pb3ajax=1&task=deleteFile' + '&' + token + '=1',
-		renameFolder: baseURL + '/index.php?pb3ajax=1&task=renameFolder' + '&' + token + '=1',
-		renameFile: baseURL + '/index.php?pb3ajax=1&task=renameFile' + '&' + token + '=1'
-	}
+		getAllFiles: baseURL + `/index.php?${params}&task=getListFiles&${token}=1`,
+		getFullDirectory: baseURL + `/index.php?${params}&task=getFullDirectory&${token}=1`,
+		uploadFile: baseURL + `/index.php?${params}&task=uploadFile&${token}=1`,
+		createFolder: baseURL + `/index.php?${params}&task=createFolder&${token}=1`,
+		deleteFolder: baseURL + `/index.php?${params}&task=deleteFolder&${token}=1`,
+		deleteFile: baseURL + `/index.php?${params}&task=deleteFile&${token}=1`,
+		renameFolder: baseURL + `/index.php?${params}&task=renameFolder&${token}=1`,
+		renameFile: baseURL + `/index.php?${params}&task=renameFile&${token}=yar1`
+  }
+
 	ReactDOM.render(React.createElement(BBMediaSelector, {
 		config: config,
 		fileType: 'TYPE_FILE'
