@@ -2,7 +2,33 @@ const path = require('path')
 const webpack = require('webpack')
 
 
+const reactExternal = {
+	root: 'React',
+	commonjs2: 'react',
+	commonjs: 'react',
+	amd: 'react'
+}
+const reactDOMExternal = {
+	root: 'ReactDOM',
+	commonjs2: 'react-dom',
+	commonjs: 'react-dom',
+	amd: 'react-dom'
+}
+
+const jqueryExternal = {
+	root: '$',
+	commonjs2: 'jquery',
+	commonjs: 'jquery',
+	amd: 'jquery'
+}
+const underscoreExternal = {
+	root: '_',
+	commonjs2: 'underscore',
+	commonjs: 'underscore',
+	amd: 'underscore'
+}
 const isProd = process.env.BABEL_ENV === 'production'
+console.log('isProd', isProd)
 module.exports = {
 	context: path.resolve(__dirname, './src'),
 	entry: {
@@ -12,20 +38,19 @@ module.exports = {
 		path: path.join(__dirname, '/lib/'),
 		filename: isProd ? 'bb-media-selector.js' : 'bb-media-selector-dev.js',
 		library: 'BBMediaSelector',
-		libraryTarget: 'umd',
-		umdNamedDefine: true
+		libraryTarget: 'umd'
 	},
-
 	externals: {
-		'react': 'react',
-		'react-dom': 'react-dom',
-		'jquery': 'jquery',
-		'underscore': 'underscore'
+		react: reactExternal,
+		'react-dom': reactDOMExternal,
+		jquery: jqueryExternal,
+		underscore: underscoreExternal
 	},
 
 	devServer: {
 		contentBase: path.resolve(__dirname, './src') // New
 	},
+	devtool: 'source-map',
 	module: {
 		rules: [
 			{

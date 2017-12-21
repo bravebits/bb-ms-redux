@@ -29,7 +29,6 @@ module.exports = {
 		'no-underscore-dangle': 0,
 		'no-shadow': 1,
 		'no-plusplus': 0,
-		'no-undef': 1,
 		'no-unreachable': 1,
 		'max-len': 0,
 		'no-console': 1,
