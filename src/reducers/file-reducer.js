@@ -14,7 +14,7 @@ const defaultState = {
 		type: 'dir'
 	},
 	root: '/',
-	currentPath: '/images/',
+	currentPath: '',
 	searchString: '',
 	fileType: ''
 }

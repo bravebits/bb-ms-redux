@@ -545,7 +545,7 @@ iframe .wrapper {
 }
 .media-selector .tooltip.noti {
 	bottom: 30px;
-	max-width: 160px;
+	max-width: 200px;
 	padding: 5px 10px;
 	text-align: left;
 	opacity: 0.9;
@@ -565,7 +565,6 @@ iframe .wrapper {
 
 .media-selector .tooltip {
 	bottom: 80px;
-	height: 33px;
 }
 
 .media-selector .tooltip.black {
