@@ -217,11 +217,11 @@ class File extends Component {
 
 function mapStateToProps(state) {
 	return {
-		baseURL: state.generalReducer.config.baseURL,
 		currentPath: state.fileReducer.currentPath,
-		config: state.generalReducer.config,
 		selectedFile: state.fileReducer.selectedFile,
 		selectedFiles: state.fileReducer.selectedFiles,
+		config: state.generalReducer.config,
+		baseURL: state.generalReducer.config.baseURL,
 		fileType: state.generalReducer.fileType
 	}
 }

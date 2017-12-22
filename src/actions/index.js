@@ -100,53 +100,52 @@ export function updateSearchString(k) {
 	}
 }
 
+export function addUploadingFile(files, file) {
+	// Check file upload name
+	// In case there are some files with the same name with upload file, we need to add some index to upload file
+	// For example: image.jpg, image(1).jpg, image(2).jpg, etc.
+	const splitExtension = (name) => {
+		const pos = name.lastIndexOf('.')
+		return [name.substr(0, pos), name.substr(pos)]
+	}
+	const [fileName, fileExt] = splitExtension(file.name)
+	const lastIndex = _.reduce(files, (result, f) => {
+		if (f.type !== 'file') return result
+		const [fName, fExt] = splitExtension(f.name)
+		if (fileExt != fExt || fName.substr(0, fileName.length) !== fileName)
+			return result
+		const suffix = fName.substr(fileName.length)
+		const index = suffix === ''? 0 : parseInt(suffix.slice(1, -1))
+		return Math.max(result, index)
+	}, -1)
+	const newFileName = lastIndex === -1? file.name : `${fileName}(${lastIndex + 1})${fileExt}`
+	// End
+
+	return {
+		type: actConstants.ADD_UPLOADING_FILE,
+		name: newFileName,
+		file
+	}
+}
+
 export function onUploadSuccess(f) {
 	return {
 		type: actConstants.UPLOAD_SUCCESS,
 		file: f
 	}
 }
+
 // todo: improve this and add multi upload
-export function handleUploadFile(path, endPoint, file, endPointFetchFiles) {
+export function handleUploadFile(path, endPoint, file, fileName, onProcess) {
 	return function(dispatch) {
-		joomlaApi.handleUploadFile(path, endPoint, file).then(res => {
+		joomlaApi.handleUploadFile(path, endPoint, file, fileName, onProcess).then(res => {
 			if (res && res.message === 'done') {
-				dispatch(getAllFiles(path, endPointFetchFiles))
-				// get the info of the latest upload file
-				// normal case, if there's only one unique file uploaded, we just need to filter and get info by its name
-				// but if there are duplicated files like: image.png and image(1).png, (1) here is added by server
-				// we need to find the filename because it is not the {file.name}
-				// const fileNameNoExt = file.name.replace(/\..*$/, '')
-				// const lastVal = _.chain(res.list)
-				// 	.filter(item => {
-				// 		return item.name.indexOf(fileNameNoExt) >= 0
-				// 	})
-				// 	.map(item => {
-				// 		const newVal = item.name
-				// 			.replace(fileNameNoExt, '')
-				// 			.replace(/\..*$/, '')
-				// 		if (_.isEmpty(newVal)) {
-				// 			return 0
-				// 		} else {
-				// 			const numVal = newVal
-				// 				.replace('(', '')
-				// 				.replace(')', '')
-				// 			return parseInt(numVal, 10)
-				// 		}
-				// 	})
-				// 	.sortBy(num => {
-				// 		return num
-				// 	})
-				// 	.last()
-				// 	.value()
-				// const extWithoutDot = file.name.replace(/^.*\./, '')
-				// const fileName = `${fileNameNoExt}(${lastVal}).${extWithoutDot}`
-				// //=========//
-				// const fileInfo = _.filter(res.list, item => {
-				// 	return item.name === fileName
-				// })[0]
-				// // got it {fileInfo}
-				// dispatch(onUploadSuccess(fileInfo))
+				const uploadedFile = _.find(res.list, item => {
+					return item.name === fileName
+				})
+				delete uploadedFile.key
+				dispatch(onUploadSuccess(uploadedFile))
+				dispatch(selectMultiFileAdd(path + uploadedFile.name))
 				dispatch(
 					addMessage({
 						type: generalConstants.TOAST_SUCCESS,
@@ -155,6 +154,7 @@ export function handleUploadFile(path, endPoint, file, endPointFetchFiles) {
 					})
 				)
 			} else {
+				dispatch(onDeleteFileSuccess(fileName))
 				dispatch(
 					addMessage({
 						type: generalConstants.TOAST_ERROR,
@@ -165,6 +165,12 @@ export function handleUploadFile(path, endPoint, file, endPointFetchFiles) {
 				)
 			}
 		})
+	}
+}
+
+export function handleUploadFiles(currentFiles, uploadFiles) {
+	return (dispatch) => {
+		_.each(uploadFiles, file => dispatch(addUploadingFile(currentFiles, file)))
 	}
 }
 

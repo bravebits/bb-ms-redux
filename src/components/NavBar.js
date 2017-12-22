@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import $ from 'jquery'
 import _ from 'underscore'
-import { getNodeByPath } from '../libs/libs'
+import * as libs from '../libs/libs'
 
 class NavBar extends Component {
 	componentWillMount = () => {
@@ -34,7 +34,7 @@ class NavBar extends Component {
 		this.props.createFolder(
 			this.props.currentPath,
 			this.props.config.createFolder,
-			getNodeByPath(this.props.treeNodes, this.props.currentPath).children
+			this.props.files
 		)
 	}
 
@@ -49,16 +49,14 @@ class NavBar extends Component {
 	}
 
 	uploadFile = e => {
-		const file = e.target.files[0]
-		this.fileInput.value = ''
-		if (file) {
-			this.props.handleUploadFile(
-				this.props.currentPath,
-				this.props.config.uploadFile,
-				file,
-				this.props.config.getAllFiles
+		const uploadFiles = e.target.files
+		if (uploadFiles) {
+			this.props.handleUploadFiles(
+				this.props.files,
+				uploadFiles
 			)
 		}
+		this.fileInput.value = ''
 	}
 
 	render() {
@@ -109,6 +107,7 @@ class NavBar extends Component {
 									}}
 									type="file"
 									onChange={this.uploadFile}
+									multiple
 								/>
 								<button
 									id="button-upload"
@@ -159,8 +158,11 @@ function mapStateToProps(state) {
 		fileType: state.generalReducer.fileType,
 		currentPath: state.fileReducer.currentPath,
 		selectedFiles: state.fileReducer.selectedFiles,
-		treeNodes: state.fileReducer.treeNodes,
-		searchString: state.fileReducer.searchString
+		searchString: state.fileReducer.searchString,
+		files: libs.getNodeByPath(
+			state.fileReducer.treeNodes,
+			state.fileReducer.currentPath
+		).children
 	}
 }
 

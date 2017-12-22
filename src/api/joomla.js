@@ -25,6 +25,8 @@ export const handleUploadFile = (
 	path = '/',
 	endPoint,
 	file,
+	fileName,
+	onProcess,
 	allowType = []
 ) => {
 	const reader = new FileReader()
@@ -44,17 +46,17 @@ export const handleUploadFile = (
 			const data = {
 				dir: path,
 				data_uri: upload.target.result,
-				filename: file.name,
+				filename: fileName,
 				filetype: file.type
 			}
-			uploadFile(endPoint, data, resolve, reject, 0)
+			uploadFile(endPoint, data, resolve, reject, onProcess)
 		}
 	}).catch(err => {
 		console.log('there is an error', err)
 	})
 }
 
-export const uploadFile = (endPoint, data, resolve, reject, times) => {
+export const uploadFile = (endPoint, data, resolve, reject, onProcess) => {
 	$.ajax({
 		url: `${endPoint}`,
 		type: 'POST',
@@ -64,23 +66,17 @@ export const uploadFile = (endPoint, data, resolve, reject, times) => {
 			reject(res)
 		},
 		success: res => {
-			if (res.message == 'Filename already exists!') {
-				times++
-				if (times > 1) {
-					data.filename = data.filename.replace(`(${times - 1})`, '')
-				}
-				const fileExt = data.filename.substring(
-					data.filename.lastIndexOf('.'),
-					data.filename.length
-				)
-				data.filename = `${data.filename.replace(
-					fileExt,
-					''
-				)}(${times})${fileExt}`
-				uploadFile(endPoint, data, resolve, reject, times)
-			} else {
-				resolve(res)
-			}
+			resolve(res)
+		},
+		xhr: () => {
+			var xhr = new window.XMLHttpRequest()
+			xhr.upload.addEventListener("progress", function (evt) {
+					if (evt.lengthComputable) {
+							var percentComplete = evt.loaded / evt.total
+							onProcess(parseInt(percentComplete * 100) + '%')
+					}
+			}, false)
+			return xhr
 		}
 	})
 }

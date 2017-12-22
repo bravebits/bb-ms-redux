@@ -9,8 +9,8 @@ Your code need pass all tests to merge to master branch<br/>
 Run `yarn test` for running tests
 ## Contributor's guide
 ### Development
-- In the root folder of this project, run `node server.js`
-- Run `yarn start`, then go to `http://localhost:3000/` to see the result
+To run project in development mode
+- Run `yarn dev`, wait for webpack to build codes then go to `http://localhost:3000/` to see the result
 ### Production
 - Run `yarn build`, get the built file in `lib` folder, do not forget to take the `bootstrapt4.css` file with you in case your project do not have JSN Extension Framework
 That's it, have fun :D

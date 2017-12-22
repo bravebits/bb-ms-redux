@@ -84,8 +84,23 @@ export default function(state = defaultState, action) {
 			cloneSelectedFiles.length = 0
 			newState.selectedFiles = cloneSelectedFiles
 			return newState
-		case actConstants.CREATE_FOLDER_SUCCESS:
+		case actConstants.ADD_UPLOADING_FILE:
+			libs.getNodeByPath(cloneTreeNodes, state.currentPath).children.push({
+				name: action.name,
+				type: 'file',
+				uploading: action.file
+			})
+			newState.treeNodes = cloneTreeNodes
+			return newState
 		case actConstants.UPLOAD_SUCCESS:
+			node = libs.getNodeByPath(cloneTreeNodes, state.currentPath)
+			node.children = _.map(node.children, file => {
+				if (file.name === action.file.name) return action.file
+				return file
+			})
+			newState.treeNodes = cloneTreeNodes
+			return newState
+		case actConstants.CREATE_FOLDER_SUCCESS:
 			libs.getNodeByPath(cloneTreeNodes, state.currentPath).children.push(action.file)
 			newState.treeNodes = cloneTreeNodes
 			return newState
