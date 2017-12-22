@@ -9,12 +9,12 @@ const defaultState = {
 	selectedFiles: [],
 	chosenFile: null,
 	treeNodes: {
-		isExpanded: false,
+		isExpanded: true,
 		name: '/',
 		type: 'dir'
 	},
 	root: '/',
-	currentPath: '/',
+	currentPath: '/images/',
 	searchString: '',
 	fileType: ''
 }

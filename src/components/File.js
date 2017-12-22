@@ -83,8 +83,6 @@ class File extends Component {
 			selectedFiles && selectedFiles.indexOf(path) >= 0
 		return libs.isMedia(this.props.data.name) ? (
 			<div
-				onDoubleClick={this.chooseFile}
-				onClick={this.selectFile}
 				className={`${css['list-media__item']}  ${this.props.isBack
 					? css['back']
 					: ''}`}
@@ -112,9 +110,12 @@ class File extends Component {
 							</label>
 						</div>
 					</div>
-					<div className={`${css['list-media__item__avatar']}`}>
+					<div className={`${css['list-media__item__avatar']}`}
+						onDoubleClick={this.chooseFile}
+						onClick={this.selectFile}
+					>
 						<img
-							src={`${this.props.baseURL}images${this.props
+							src={`${this.props.baseURL}${this.props
 								.currentPath}${this.props.data.name}`}
 						/>
 					</div>
@@ -146,8 +147,6 @@ class File extends Component {
 			</div>
 		) : this.props.fileType === generalConstants.TYPE_FILE ? (
 			<div
-				onDoubleClick={this.chooseFile}
-				onClick={this.selectFile}
 				className={`${css['list-media__item']}  ${this.props.isBack
 					? css['back']
 					: ''}`}
@@ -175,7 +174,10 @@ class File extends Component {
 							</label>
 						</div>
 					</div>
-					<div className={`${css['list-media__item__avatar']}`}>
+					<div className={`${css['list-media__item__avatar']}`}
+						onDoubleClick={this.chooseFile}
+						onClick={this.selectFile}
+					>
 						<span className={`${css['file-type']}`}>
 							{this.props.data.name.match(/\..*$/) ? (
 								this.props.data.name
@@ -189,6 +191,7 @@ class File extends Component {
 					<div className={`${css['list-media__item__title']}`}>
 						<span
 							ref={r => (this.name = r)}
+							onBlur={this.handleBlur}
 							onDoubleClick={this.enableEditting}
 							onKeyDown={this.handleOnKeyDown}
 						>
