@@ -304,8 +304,9 @@ export function renameFile(endPoint, path, newPath, currentPath) {
 }
 
 export function chooseFile(p) {
-	const absolutePath = generalConstants.ROOT_FOLDER + p
-	const event = new CustomEvent('choose-file', { detail: absolutePath })
+	const event = new CustomEvent('choose-file', {
+		detail: p && p.substr(1) //remove '/' from head of path
+	})
 	document.dispatchEvent(event)
 	return {
 		type: actConstants.CHOOSE_FILE,
@@ -314,8 +315,9 @@ export function chooseFile(p) {
 }
 
 export function selectFile(p) {
-	const absolutePath = generalConstants.ROOT_FOLDER + p
-	const event = new CustomEvent('select-file', { detail: absolutePath })
+	const event = new CustomEvent('select-file', {
+		detail: p && p.substr(1)
+	})
 	document.dispatchEvent(event)
 	return {
 		type: actConstants.SELECT_FILE,
