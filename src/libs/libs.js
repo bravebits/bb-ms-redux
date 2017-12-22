@@ -16,7 +16,7 @@ export function isMedia(name) {
 	return name
 		.toLowerCase()
 		.match(
-			/.(bmp|csv|doc|gif|ico|jpg|jpeg|odg|odp|ods|odt|pdf|png|ppt|swf|txt|xcf|xls)$/
+			/.(bmp|csv|doc|gif|ico|jpg|jpeg|odg|odp|ods|odt|pdf|png|ppt|swf|xcf)$/
 		)
 }
 
@@ -28,9 +28,9 @@ export function setPathToLocal(path) {
 
 export function getPathFromLocal() {
 	if (typeof Storage !== 'undefined') {
-		return localStorage.getItem('mediaselectorpath') || '/'
+		return localStorage.getItem('mediaselectorpath') || '/images/'
 	} else {
-		return '/'
+		return '/images/'
 	}
 }
 
