@@ -106,7 +106,7 @@ export function addUploadingFile(files, file) {
 	// For example: image.jpg, image(1).jpg, image(2).jpg, etc.
 	const splitExtension = (name) => {
 		const pos = name.lastIndexOf('.')
-		return [name.substr(0, pos), name.substr(pos)]
+		return pos !== -1 ? [name.substr(0, pos), name.substr(pos)] : [name, '']
 	}
 	const [fileName, fileExt] = splitExtension(file.name)
 	const lastIndex = _.reduce(files, (result, f) => {
