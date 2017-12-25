@@ -68,7 +68,7 @@ class DropZone extends Component {
             <b>
               {
                 this.props.currentPath.split('/')
-                .filter(folder => folder).pop() || 'Root folder'
+                .filter(folder => folder).pop() || '/root'
               }
             </b>
           </span>

@@ -22,13 +22,13 @@ export function isMedia(name) {
 
 export function setPathToLocal(path) {
 	if (typeof Storage !== 'undefined') {
-		localStorage.setItem('mediaselectorpath', path)
+		localStorage.setItem('mediaselectorPath', path)
 	}
 }
 
 export function getPathFromLocal() {
 	if (typeof Storage !== 'undefined') {
-		return localStorage.getItem('mediaselectorpath') || '/images/'
+		return localStorage.getItem('mediaselectorPath') || '/images/'
 	} else {
 		return '/images/'
 	}
