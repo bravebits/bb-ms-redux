@@ -39,6 +39,6 @@ export default function(state = initialState, action) {
 			newState.localPath = action.localPath
 			return newState
 		default:
-			return newState
+			return state
 	}
 }

@@ -6,15 +6,16 @@ const initialState = {
 	selectedFiles: [],
 	chosenFile: null,
 	treeNodes: {
-		isExpanded: false,
+		isExpanded: true,
 		name: '/',
 		type: 'dir'
 	},
 	root: '/',
-	currentPath: '/',
+	currentPath: '',
 	searchString: '',
-	type: ''
+	fileType: ''
 }
+
 
 const randomState = {
   selectedFile: '/image.jpg',
@@ -587,11 +588,11 @@ describe('hanlde DELETE_FOLDER_SUCCESS action', () => {
   })
 
   it('should run normally if current folder empty', () => {
-    const newState = reducer({ randomState, currentPath: '/New folder/' }, {
+    const newState = reducer({ ...randomState, currentPath: '/New folder/' }, {
       type:actConstants.DELETE_FOLDER_SUCCESS,
       name
     })
-    expect(newState.treeNodes.children[1]).not.toHaveProperty('children')
+    expect(newState.treeNodes.children[2]).not.toHaveProperty('children')
   })
 
   it('should ignore extra properties', () => {
@@ -629,11 +630,11 @@ describe('handle DELETE_FILE_SUCCESS action', () => {
   })
 
   it('should run normally if current folder empty', () => {
-    const newState = reducer({ randomState, currentPath: '/New folder/' }, {
+    const newState = reducer({ ...randomState, currentPath: '/New folder/' }, {
       type:actConstants.DELETE_FILE_SUCCESS,
       name
     })
-    expect(newState.treeNodes.children[1]).not.toHaveProperty('children')
+    expect(newState.treeNodes.children[2]).not.toHaveProperty('children')
   })
 
   it('should ignore extra property', () => {

@@ -67,11 +67,9 @@ export default function(state = defaultState, action) {
 			newState.selectedFile = null
 			return newState
 		case actConstants.SELECT_MULTI_FILE_REMOVE:
-			cloneSelectedFiles.splice(
-				cloneSelectedFiles.indexOf(action.path),
-				1
+			newState.selectedFiles = _.filter(state.selectedFiles, file =>
+				file !== action.path
 			)
-			newState.selectedFiles = cloneSelectedFiles
 			return newState
 		case actConstants.DELETE_FILES_SUCCESS:
 			newState.selectedFiles = []
@@ -128,6 +126,6 @@ export default function(state = defaultState, action) {
 			newState.fileType = action.fileType
 			return newState
 		default:
-			return newState
+			return state
 	}
 }
