@@ -11,7 +11,7 @@ class HideSidebarButton extends Component {
 			<div className={`${css['btn-hide-tree-folder']}`}>
 				<a onClick={toggleSidebar}>
 					<span><i className="fa fa-arrow-left"></i></span>
-					<span>Hide</span>
+					{/* <span>Hide</span> */}
 				</a>
 			</div>
 		)
