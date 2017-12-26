@@ -6,12 +6,7 @@ import $ from 'jquery'
  */
 export const getAllFiles = (path = '/', endPoint, type) =>
 	$.ajax({
-		url: `${endPoint}&dir=${path === '' ? '/' : path}&type=${type}`
-	})
-
-export const getFullDirectory = (endPoint, path = '/') =>
-	$.ajax({
-		url: `${endPoint}&dir=${path}`
+		url: `${endPoint}${path === '/' ? '' : '&dir=' + path}&type=${type}`
 	})
 
 /**
@@ -83,13 +78,13 @@ export const uploadFile = (endPoint, data, resolve, reject, onProcess) => {
 
 /**
  * create a folder in (images)/...
- * @param {string} inPath: where the new folder will be put
+ * @param {string} path: where the new folder will be put
  * @param {string} name: name of the new folder
  * @return {$.ajax} : Use .done(res => {}) to handle this ajax request
  */
-export const createFolder = (endPoint, inPath, name) =>
+export const createFolder = (endPoint, path = '/', name) =>
 	$.ajax({
-		url: `${endPoint}&dir=${inPath}&name=${name}`
+		url: `${endPoint}${path === '/' ? '' : '&dir=' + path}&name=${name}`
 	})
 
 /**
