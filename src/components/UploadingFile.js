@@ -23,6 +23,8 @@ class UploadingFile extends Component {
       data.name,
       (percentage) => this.setState({ uploadPercentage: percentage })
     )
+
+    data.willSelect && this.props.selectFile(currentPath + data.name)
   }
 
   render() {
