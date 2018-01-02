@@ -85,6 +85,7 @@ export default function(state = defaultState, action) {
 		case actConstants.ADD_UPLOADING_FILE:
 			libs.getNodeByPath(cloneTreeNodes, state.currentPath).children.push({
 				name: action.name,
+				willSelect: action.willSelect,
 				type: 'file',
 				uploading: action.file
 			})

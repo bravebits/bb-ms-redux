@@ -100,7 +100,7 @@ export function updateSearchString(k) {
 	}
 }
 
-export function addUploadingFile(files, file) {
+export function addUploadingFile(files, file, willSelect) {
 	// Check file upload name
 	// In case there are some files with the same name with upload file, we need to add some index to upload file
 	// For example: image.jpg, image(1).jpg, image(2).jpg, etc.
@@ -124,6 +124,7 @@ export function addUploadingFile(files, file) {
 	return {
 		type: actConstants.ADD_UPLOADING_FILE,
 		name: newFileName,
+		willSelect,
 		file
 	}
 }
@@ -145,7 +146,6 @@ export function handleUploadFile(path, endPoint, file, fileName, onProcess) {
 				})
 				delete uploadedFile.key
 				dispatch(onUploadSuccess(uploadedFile))
-				dispatch(selectMultiFileAdd(path + uploadedFile.name))
 				dispatch(
 					addMessage({
 						type: generalConstants.TOAST_SUCCESS,
@@ -170,7 +170,9 @@ export function handleUploadFile(path, endPoint, file, fileName, onProcess) {
 
 export function handleUploadFiles(currentFiles, uploadFiles) {
 	return (dispatch) => {
-		_.each(uploadFiles, file => dispatch(addUploadingFile(currentFiles, file)))
+		_.each(uploadFiles, file => dispatch(
+			addUploadingFile(currentFiles, file, uploadFiles.length === 1)
+		))
 	}
 }
 
