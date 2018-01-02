@@ -80,3 +80,20 @@ export function standardizedPath(path, type) {
 	if (type === 'dir' && path[path.length - 1] !== '/') path = path + '/'
 	return path
 }
+
+export function parseJSON(response) {
+	let result
+	try {
+		result = JSON.parse(response);
+	}
+	catch (e) {
+		const matched = response.match(/^[^\{\[]*(.+)$/)
+		try {
+			result = JSON.parse(matched[1])
+		}
+		catch (e) {
+
+		}
+	}
+	return result
+}
