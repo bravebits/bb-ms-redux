@@ -3,11 +3,11 @@ import css from '../styles/index.css'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as actions from '../actions'
+import globalVars from '../libs/globalVariables'
 
 class Header extends Component {
 	render() {
-		const { enableHeader } = this.props
-		if (!enableHeader) {
+		if (!globalVars.get('enableHeader')) {
 			return null
 		}
 		return (
@@ -31,14 +31,8 @@ class Header extends Component {
 	}
 }
 
-function mapStateToProps(state) {
-	return {
-		enableHeader: state.generalReducer.enableHeader
-	}
-}
-
 function mapDispatchToProps(dispatch) {
 	return bindActionCreators(actions, dispatch)
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Header)
+export default connect(null, mapDispatchToProps)(Header)

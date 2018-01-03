@@ -8,6 +8,7 @@ import Content from '../components/Content'
 import Footer from '../components/Footer'
 import Toast from '../components/Toast'
 import * as libs from '../libs/libs'
+import globalVars from '../libs/globalVariables'
 
 class App extends Component {
 	componentDidMount() {
@@ -16,20 +17,20 @@ class App extends Component {
 	}
 
 	componentWillMount() {
-		const { config, fileType, enableFooter, enableHeader } = this.props
+		globalVars.setFromObject(this.props, ['config', 'fileType', 'enableFooter', 'enableHeader'])
+
 		const { folder, selected, type } = libs.getParamsFromURL()
 		let path = selected? selected.substring(0, selected.lastIndexOf('/') + 1)
 			: libs.getPathFromLocal()
 		if (folder !== undefined && !path.includes(folder)) path = folder
 		const initOptions = {
-			config, fileType, enableFooter, enableHeader, type,
+			type,
 			root: libs.standardizedPath(folder, 'dir'),
 			path: libs.standardizedPath(path, 'dir'),
 			selected: libs.standardizedPath(selected, 'file')
 		}
 
 		this.props.init(initOptions)
-		selected && libs.setPathToLocal(path)
 	}
 
 	render() {

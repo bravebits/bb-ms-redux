@@ -33,7 +33,6 @@ class NavBar extends Component {
 	createFolder = () => {
 		this.props.createFolder(
 			this.props.currentPath,
-			this.props.config.createFolder,
 			this.props.files
 		)
 	}
@@ -41,10 +40,7 @@ class NavBar extends Component {
 	deleteMultiFiles = e => {
 		this.props.deleteMultiFiles(
 			this.props.selectedFiles,
-			this.props.config.deleteFile,
-			this.props.config.deleteFolder,
-			this.props.currentPath,
-			this.props.fileType
+			this.props.currentPath
 		)
 	}
 
@@ -154,8 +150,6 @@ class NavBar extends Component {
 function mapStateToProps(state) {
 	return {
 		viewType: state.generalReducer.viewType,
-		config: state.generalReducer.config,
-		fileType: state.generalReducer.fileType,
 		currentPath: state.fileReducer.currentPath,
 		selectedFiles: state.fileReducer.selectedFiles,
 		searchString: state.fileReducer.searchString,

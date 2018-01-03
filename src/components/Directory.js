@@ -9,10 +9,9 @@ import * as libs from '../libs/libs'
 class Directory extends Component {
 	openFolder = e => {
 		e.stopPropagation()
-		const { config, data, currentPath } = this.props
+		const { data, currentPath } = this.props
 		const path = `${currentPath + data.name}/`
-		this.props.fetchFiles(path, config.getAllFiles)
-		this.props.setPathToLocal(path)
+		this.props.fetchFiles(path)
 	}
 
 	enableEditting = e => {
@@ -43,7 +42,6 @@ class Directory extends Component {
 		const path = this.props.currentPath + this.props.data.name
 		this.props.deleteFolder(
 			path,
-			this.props.config.deleteFolder,
 			this.props.currentPath
 		)
 	}
@@ -61,7 +59,6 @@ class Directory extends Component {
 	handleBlur = e => {
 		this.name.contentEditable = false
 		this.props.renameFolder(
-			this.props.config.renameFolder,
 			this.props.currentPath + this.props.data.name,
 			this.props.currentPath + e.target.innerText,
 			this.props.currentPath
@@ -135,7 +132,6 @@ class Directory extends Component {
 
 function mapStateToProps(state) {
 	return {
-		config: state.generalReducer.config,
 		currentPath: state.fileReducer.currentPath,
 		selectedFile: state.fileReducer.selectedFile,
 		selectedFiles: state.fileReducer.selectedFiles

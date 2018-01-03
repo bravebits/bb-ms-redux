@@ -3,21 +3,17 @@ import * as actConstants from '../constants/actions'
 import _ from 'underscore'
 import * as generalConstants from '../constants/general'
 import * as libs from '../libs/libs'
+import globalVars from '../libs/globalVariables'
 
 export function init(options) {
-	const { config, fileType, enableHeader, enableFooter } = options
 	const { root, path, selected, type } = options
 
 	return dispatch => {
-		dispatch({
-			type: actConstants.INIT,
-			config, fileType, enableHeader, enableFooter
-		})
 		type && dispatch(setFileType(type))
 
 		_.reduce(path.split('/').slice(0, -1), (path, dir) => {
 			path += dir + '/'
-			dispatch(getAllFiles(path, config.getAllFiles))
+			dispatch(getAllFiles(path))
 			selected && dispatch(expandTreeNode(path))
 			return path
 		}, '')
@@ -28,11 +24,11 @@ export function init(options) {
 	}
 }
 
-export function getAllFiles(path, endPoint) {
+export function getAllFiles(path) {
 	return (dispatch, getState) => {
 		const { fileType } = getState().fileReducer
 
-		joomlaApi.getAllFiles(path, endPoint, fileType).done(res => {
+		joomlaApi.getAllFiles(path, fileType).done(res => {
 			dispatch({
 				type:actConstants.GET_ALL_FILES,
 				path,
@@ -43,15 +39,16 @@ export function getAllFiles(path, endPoint) {
 }
 
 export function setCurrentPath(path) {
+	libs.setPathToLocal(path)
 	return {
 		type: actConstants.SET_CURRENT_PATH,
 		path
 	}
 }
 
-export function fetchFiles(path, endPoint) {
+export function fetchFiles(path) {
 	return dispatch => {
-		dispatch(getAllFiles(path, endPoint))
+		dispatch(getAllFiles(path))
 		dispatch(setCurrentPath(path))
 	}
 }
@@ -63,11 +60,11 @@ export function expandTreeNode(path) {
 	}
 }
 
-export function checkAndExpand(path, endPoint) {
+export function checkAndExpand(path) {
 	return (dispatch, getState) => {
 		const { treeNodes } = getState().fileReducer
 		if (libs.getNodeByPath(treeNodes, path).children === undefined) {
-			dispatch(getAllFiles(path, endPoint))
+			dispatch(getAllFiles(path))
 		}
 		dispatch(expandTreeNode(path))
 	}
@@ -136,10 +133,9 @@ export function onUploadSuccess(f) {
 	}
 }
 
-// todo: improve this and add multi upload
-export function handleUploadFile(path, endPoint, file, fileName, onProcess) {
+export function handleUploadFile(path, file, fileName, onProcess) {
 	return function(dispatch) {
-		joomlaApi.handleUploadFile(path, endPoint, file, fileName, onProcess).then(res => {
+		joomlaApi.handleUploadFile(path, file, fileName, onProcess).then(res => {
 			if (res && res.message === 'done') {
 				const uploadedFile = _.find(res.list, item => {
 					return item.name === fileName
@@ -182,7 +178,8 @@ export function onCreateFolderSuccess(f) {
 		file: f
 	}
 }
-export function createFolder(path, endPoint, files) {
+
+export function createFolder(path, files) {
 	const getLastIndOfSameName = name => {
 		//find the last ind
 		const lastInd = _.chain(files)
@@ -208,7 +205,7 @@ export function createFolder(path, endPoint, files) {
 		? nextInd
 		: ''}`
 	return function(dispatch) {
-		joomlaApi.createFolder(endPoint, path, name).done(res => {
+		joomlaApi.createFolder(path, name).done(res => {
 			const result = libs.parseJSON(res)
 			if (result.success) {
 				const folder = {
@@ -236,12 +233,12 @@ export function onRenameFolderSuccess(on, nn) {
 	}
 }
 
-export function renameFolder(endPoint, path, newPath, currentPath) {
+export function renameFolder(path, newPath, currentPath) {
 	return function(dispatch) {
 		if (path !== newPath) {
 			const oldName = path.replace(currentPath, '')
 			const newName = newPath.replace(currentPath, '')
-			joomlaApi.renameFolder(endPoint, path, newPath).done(res => {
+			joomlaApi.renameFolder(path, newPath).done(res => {
 				const result = libs.parseJSON(res)
 				if (result.success) {
 					dispatch(onRenameFolderSuccess(oldName, newName))
@@ -275,12 +272,12 @@ export function onRenameFileSuccess(on, nn) {
 	}
 }
 
-export function renameFile(endPoint, path, newPath, currentPath) {
+export function renameFile(path, newPath, currentPath) {
 	return function(dispatch) {
 		if (path !== newPath) {
 			const oldName = path.replace(currentPath, '')
 			const newName = newPath.replace(currentPath, '')
-			joomlaApi.renameFile(endPoint, path, newPath).done(res => {
+			joomlaApi.renameFile(path, newPath).done(res => {
 				const result = libs.parseJSON(res)
 				if (result.success) {
 					dispatch(onRenameFileSuccess(oldName, newName))
@@ -334,11 +331,11 @@ export function onDeleteFileSuccess(fn) {
 	}
 }
 
-export function deleteFile(path, endPoint, currentPath, mode) {
+export function deleteFile(path, currentPath, mode) {
 	return function(dispatch) {
 		const fileName = path.replace(currentPath, '')
 		if (mode === 'multi') {
-			joomlaApi.deleteFile(endPoint, path).done(res => {
+			joomlaApi.deleteFile(path).done(res => {
 				const result = libs.parseJSON(res)
 				if (result.success) {
 					dispatch(onDeleteFileSuccess(fileName))
@@ -347,7 +344,7 @@ export function deleteFile(path, endPoint, currentPath, mode) {
 		} else {
 			const cResult = confirm('Are you sure you want to delete?')
 			if (cResult) {
-				joomlaApi.deleteFile(endPoint, path).done(res => {
+				joomlaApi.deleteFile(path).done(res => {
 					const result = libs.parseJSON(res)
 					if (result.success) {
 						dispatch(onDeleteFileSuccess(fileName))
@@ -372,11 +369,11 @@ export function onDeleteFolderSuccess(fn) {
 	}
 }
 
-export function deleteFolder(path, endPoint, currentPath, mode) {
+export function deleteFolder(path, currentPath, mode) {
 	return function(dispatch) {
 		const folderName = path.replace(currentPath, '')
 		if (mode === 'multi') {
-			joomlaApi.deleteFolder(endPoint, path).done(res => {
+			joomlaApi.deleteFolder(path).done(res => {
 				const result = libs.parseJSON(res)
 				if (result.success) {
 					dispatch(onDeleteFolderSuccess(folderName))
@@ -385,7 +382,7 @@ export function deleteFolder(path, endPoint, currentPath, mode) {
 		} else {
 			const cResult = confirm('Are you sure you want to delete?')
 			if (cResult) {
-				joomlaApi.deleteFolder(endPoint, path).done(res => {
+				joomlaApi.deleteFolder(path).done(res => {
 					const result = libs.parseJSON(res)
 					if (result.success) {
 						dispatch(onDeleteFolderSuccess(folderName))
@@ -425,21 +422,17 @@ export function deleteFilesSuccess() {
 
 export function deleteMultiFiles(
 	files,
-	endPointDeleteFile,
-	endPoindDeleteFolder,
-	currentPath,
-	fileType
+	currentPath
 ) {
 	return function(dispatch) {
 		const cResult = confirm('Are you sure you want to delete?')
 		if (cResult) {
 			for (let i = 0; i < files.length; i++) {
 				if (files[i].match(/\./)) {
-					if (fileType === generalConstants.TYPE_FILE) {
+					if (globalVars.get('fileType') === generalConstants.TYPE_FILE) {
 						dispatch(
 							deleteFile(
 								files[i],
-								endPointDeleteFile,
 								currentPath,
 								'multi'
 							)
@@ -449,7 +442,6 @@ export function deleteMultiFiles(
 							dispatch(
 								deleteFile(
 									files[i],
-									endPointDeleteFile,
 									currentPath,
 									'multi'
 								)
@@ -460,7 +452,6 @@ export function deleteMultiFiles(
 					dispatch(
 						deleteFolder(
 							files[i],
-							endPoindDeleteFolder,
 							currentPath,
 							'multi'
 						)
@@ -519,22 +510,6 @@ export function checkAll() {
 export function uncheckAll() {
 	return {
 		type: actConstants.UNCHECK_ALL
-	}
-}
-
-export function setPathToLocal(path) {
-	libs.setPathToLocal(path)
-	return {
-		type: actConstants.SET_PATH_TO_LOCAL,
-		localPath: path
-	}
-}
-
-export function getPathFromLocal() {
-	const path = libs.getPathFromLocal()
-	return {
-		type: actConstants.GET_PATH_FROM_LOCAL,
-		localPath: path
 	}
 }
 
