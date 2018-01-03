@@ -36,7 +36,6 @@ export default function(state = defaultState, action) {
 		case actConstants.SET_CURRENT_PATH:
 			newState.currentPath = action.path
 			newState.selectedFiles = []
-			newState.selectedFile = null
 			newState.searchString = ''
 			return newState
 		case actConstants.EXPAND_TREE_NODE:
@@ -50,21 +49,20 @@ export default function(state = defaultState, action) {
 		case actConstants.UPDATE_SEARCH_STRING:
 			newState.searchString = action.keyWord
 			newState.selectedFiles = []
-			newState.selectedFile = null
 			return newState
 		case actConstants.CHOOSE_FILE:
 			newState.chosenFile = action.path
 			newState.selectedFiles = []
-			newState.selectedFile = null
 			return newState
 		case actConstants.SELECT_FILE:
 			newState.selectedFile = action.path
-			newState.selectedFiles = []
+			return newState
+		case actConstants.DESELECT_FILE:
+			newState.selectedFile = null
 			return newState
 		case actConstants.SELECT_MULTI_FILE_ADD:
 			cloneSelectedFiles.push(action.path)
 			newState.selectedFiles = cloneSelectedFiles
-			newState.selectedFile = null
 			return newState
 		case actConstants.SELECT_MULTI_FILE_REMOVE:
 			newState.selectedFiles = _.filter(state.selectedFiles, file =>

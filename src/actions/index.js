@@ -20,7 +20,7 @@ export function init(options) {
 
 		root &&	dispatch(setRoot(root))
 		dispatch(setCurrentPath(path))
-		dispatch(selectFile(selected))
+		selected && dispatch(selectFile(selected))
 	}
 }
 
@@ -40,9 +40,12 @@ export function getAllFiles(path) {
 
 export function setCurrentPath(path) {
 	libs.setPathToLocal(path)
-	return {
-		type: actConstants.SET_CURRENT_PATH,
-		path
+	return dispatch => {
+		dispatch({
+			type: actConstants.SET_CURRENT_PATH,
+			path
+		})
+		dispatch(deselectFile())
 	}
 }
 
@@ -91,9 +94,12 @@ export function toggleSidebar() {
 }
 
 export function updateSearchString(k) {
-	return {
-		type: actConstants.UPDATE_SEARCH_STRING,
-		keyWord: k
+	return dispatch => {
+		dispatch({
+			type: actConstants.UPDATE_SEARCH_STRING,
+			keyWord: k
+		})
+		dispatch(deselectFile())
 	}
 }
 
@@ -136,8 +142,9 @@ export function onUploadSuccess(f) {
 export function handleUploadFile(path, file, fileName, onProcess) {
 	return function(dispatch) {
 		joomlaApi.handleUploadFile(path, file, fileName, onProcess).then(res => {
-			if (res && res.message === 'done') {
-				const uploadedFile = _.find(res.list, item => {
+			const result = libs.parseJSON(res)
+			if (result && result.message === 'done') {
+				const uploadedFile = _.find(result.list, item => {
 					return item.name === fileName
 				})
 				delete uploadedFile.key
@@ -233,7 +240,7 @@ export function onRenameFolderSuccess(on, nn) {
 	}
 }
 
-export function renameFolder(path, newPath, currentPath) {
+export function renameFolder(path, newPath, currentPath, onRenameFail) {
 	return function(dispatch) {
 		if (path !== newPath) {
 			const oldName = path.replace(currentPath, '')
@@ -250,6 +257,7 @@ export function renameFolder(path, newPath, currentPath) {
 						})
 					)
 				} else {
+					onRenameFail()
 					dispatch(
 						addMessage({
 							type: generalConstants.TOAST_ERROR,
@@ -272,8 +280,9 @@ export function onRenameFileSuccess(on, nn) {
 	}
 }
 
-export function renameFile(path, newPath, currentPath) {
-	return function(dispatch) {
+export function renameFile(path, newPath, currentPath, onRenameFail) {
+	return function(dispatch, getState) {
+		const selectedFile = getState().fileReducer.selectedFile
 		if (path !== newPath) {
 			const oldName = path.replace(currentPath, '')
 			const newName = newPath.replace(currentPath, '')
@@ -281,6 +290,7 @@ export function renameFile(path, newPath, currentPath) {
 				const result = libs.parseJSON(res)
 				if (result.success) {
 					dispatch(onRenameFileSuccess(oldName, newName))
+					path === selectedFile && dispatch(selectFile(newPath))
 					dispatch(
 						addMessage({
 							type: generalConstants.TOAST_SUCCESS,
@@ -289,6 +299,7 @@ export function renameFile(path, newPath, currentPath) {
 						})
 					)
 				} else {
+					onRenameFail()
 					dispatch(
 						addMessage({
 							type: generalConstants.TOAST_ERROR,
@@ -324,6 +335,14 @@ export function selectFile(p) {
 	}
 }
 
+export function deselectFile() {
+	const event = new CustomEvent('deselect-file')
+	document.dispatchEvent(event)
+	return {
+		type: actConstants.DESELECT_FILE
+	}
+}
+
 export function onDeleteFileSuccess(fn) {
 	return {
 		type: actConstants.DELETE_FILE_SUCCESS,
@@ -332,13 +351,15 @@ export function onDeleteFileSuccess(fn) {
 }
 
 export function deleteFile(path, currentPath, mode) {
-	return function(dispatch) {
+	return function(dispatch, getState) {
+		const selectedFile = getState().fileReducer.selectedFile
 		const fileName = path.replace(currentPath, '')
 		if (mode === 'multi') {
 			joomlaApi.deleteFile(path).done(res => {
 				const result = libs.parseJSON(res)
 				if (result.success) {
 					dispatch(onDeleteFileSuccess(fileName))
+					path === selectedFile && dispatch(deselectFile())
 				}
 			})
 		} else {
@@ -348,6 +369,7 @@ export function deleteFile(path, currentPath, mode) {
 					const result = libs.parseJSON(res)
 					if (result.success) {
 						dispatch(onDeleteFileSuccess(fileName))
+						path === selectedFile && dispatch(deselectFile())
 						dispatch(
 							addMessage({
 								type: generalConstants.TOAST_SUCCESS,
@@ -510,20 +532,6 @@ export function checkAll() {
 export function uncheckAll() {
 	return {
 		type: actConstants.UNCHECK_ALL
-	}
-}
-
-export function resetFileName(el, name) {
-	el.innerText = name
-	return {
-		type: actConstants.RESET_FILE_NAME
-	}
-}
-
-export function resetFolderName(el, name) {
-	el.innerText = name
-	return {
-		type: actConstants.RESET_FILE_NAME
 	}
 }
 

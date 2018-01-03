@@ -48,10 +48,13 @@
 <script src="../lib/bb-media-selector.js"></script>
 <script>
 	document.addEventListener('choose-file', (data) => {
-		console.log('output', data.detail)
+		console.log('choose output', data.detail)
 	})
 	document.addEventListener('select-file', data => {
-		console.log('output', data.detail)
+		console.log('select output', data.detail)
+	})
+	document.addEventListener('deselect-file', data => {
+		console.log('deselect output', data.detail)
 	})
 </script>
 <!-- below code should only runs on production -->

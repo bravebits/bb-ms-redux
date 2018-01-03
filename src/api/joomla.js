@@ -56,7 +56,6 @@ export const uploadFile = (data, resolve, reject, onProcess) => {
 		url: `${globalVars.get('config').uploadFile}`,
 		type: 'POST',
 		data: data,
-		dataType: 'json',
 		error: res => {
 			reject(res)
 		},
