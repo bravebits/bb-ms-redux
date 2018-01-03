@@ -69,9 +69,9 @@ class File extends Component {
 		this.props.renameFile(
 			this.props.currentPath + this.props.data.name,
 			this.props.currentPath + e.target.innerText,
-			this.props.currentPath
+			this.props.currentPath,
+			() => this.name.innerText = this.props.data.name
 		)
-		this.props.resetFileName(this.name, this.props.data.name)
 	}
 
 	render() {
@@ -87,10 +87,11 @@ class File extends Component {
 					: ''}`}
 			>
 				<div
-					className={`${css['content']} ${isSelected ||
-					isMultiSelected
-						? css['active']
-						: ''}`}
+					className={`
+						${css['content']}
+						${isSelected ? css['active'] : ''}
+						${isMultiSelected ? css['checked'] : ''}
+					`}
 				>
 					<div className={`${css['list-media__item__checkbox']}`}>
 						<div className={`${css['css-checkbox']}`}>
@@ -151,10 +152,11 @@ class File extends Component {
 					: ''}`}
 			>
 				<div
-					className={`${css['content']} ${isSelected ||
-					isMultiSelected
-						? css['active']
-						: ''}`}
+					className={`
+						${css['content']}
+						${isSelected ? css['active'] : ''}
+						${isMultiSelected ? css['checked'] : ''}
+					`}
 				>
 					<div className={`${css['list-media__item__checkbox']}`}>
 						<div className={`${css['css-checkbox']}`}>
