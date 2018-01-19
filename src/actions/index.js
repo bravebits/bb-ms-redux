@@ -536,9 +536,12 @@ export function uncheckAll() {
 }
 
 export function setRoot(path) {
-	return {
-		type: actConstants.SET_ROOT,
-		path
+	return dispatch => {
+		dispatch({
+			type: actConstants.SET_ROOT,
+			path
+		})
+		dispatch(expandTreeNode(path))
 	}
 }
 
