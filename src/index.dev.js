@@ -31,7 +31,6 @@ const config = {
 render(
 	<Provider store={store}>
 		<App
-			folder="/images"
 			config={config}
 			fileType={'TYPE_FILE'}
 			enableHeader={false}
