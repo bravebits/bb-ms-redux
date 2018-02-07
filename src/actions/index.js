@@ -32,7 +32,10 @@ export function getAllFiles(path) {
 			dispatch({
 				type:actConstants.GET_ALL_FILES,
 				path,
-				files: libs.parseJSON(res)
+				files: libs.parseJSON(res).sort((a, b) => {
+					return a.type !== b.type ?
+						(a.type > b.type ? 1 :  -1) : (a.name > b.name ? 1 : -1)
+				})
 			})
 		})
 	}
