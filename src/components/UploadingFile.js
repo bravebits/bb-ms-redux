@@ -41,16 +41,16 @@ class UploadingFile extends Component {
               margin: 'auto',
               height: '15px',
               width: '80%',
-              backgroundColor: '#fff',
+              backgroundColor: 'rgba(92,184,92,0.2)',
               borderRadius: '4px',
-              border: '1px solid #1366F4'
+              border: '1px solid #5cb85c'
             }}>
               <div style={{
                 height: '100%',
                 width: this.state.uploadPercentage,
-                backgroundColor: 'rgba(19, 102, 234, .8)',
+                backgroundColor: '#5cb85c',
                 color: '#fff',
-                fontSize: '13px',
+                fontSize: '12px',
                 lineHeight: 'normal'
               }}>
                 <span style={{}}>{this.state.uploadPercentage}</span>
