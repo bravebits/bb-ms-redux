@@ -27,7 +27,7 @@ const underscoreExternal = {
 	commonjs: 'underscore',
 	amd: 'underscore'
 }
-const isProd = process.env.BABEL_ENV === 'production'
+const isProd = process.env.NODE_ENV === 'production'
 console.log('isProd', isProd)
 module.exports = {
 	context: path.resolve(__dirname, './src'),

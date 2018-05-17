@@ -1,42 +1,12 @@
 {
-  "presets": ["es2015"],
-  "env": {
-    "production": {
-      "plugins": [
-        "transform-decorators-legacy",
-        "transform-runtime",
-        "react-css-modules"
-      ],
-      "presets": [
-        "react",
-        [
-          "env",
-          {
-            "targets": {
-              "browsers": [
-                ">1%",
-                "last 4 versions",
-                "Firefox ESR",
-                "not ie < 9"
-              ]
-            },
-            "modules": false
-          }
-        ],
-        "stage-0"
-      ],
-      "comments": false
-    },
-    "development": {
-      "plugins": [
-        "transform-decorators-legacy",
-        "transform-es2015-modules-commonjs",
-        "react-css-modules"
-      ],
-      "presets": [
-        "react",
-        "stage-0"
-      ]
-    }
-  }
+  "presets": [
+    "react",
+    "env"
+  ],
+  "plugins": [
+    "transform-decorators-legacy",
+    "transform-es2015-modules-commonjs",
+    "react-css-modules",
+    "transform-class-properties"
+  ]
 }
