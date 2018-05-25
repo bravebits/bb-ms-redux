@@ -21,8 +21,9 @@ class App extends Component {
 
 		let { folder, selected, type } = libs.getParamsFromURL()
 		folder = this.props.folder || folder
-		let path = selected? selected.substring(0, selected.lastIndexOf('/') + 1)
-			: libs.getPathFromLocal()
+		// let path = selected? selected.substring(0, selected.lastIndexOf('/') + 1)
+		// 	: libs.getPathFromLocal()
+		let path = ''
 		if (folder !== undefined && !path.includes(folder)) path = folder
 		const initOptions = {
 			type,
@@ -30,7 +31,6 @@ class App extends Component {
 			path: libs.standardizedPath(path, 'dir'),
 			selected: libs.standardizedPath(selected, 'file')
 		}
-
 		this.props.init(initOptions)
 	}
 

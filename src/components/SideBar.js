@@ -18,6 +18,7 @@ class SideBar extends Component {
 				<div className={`${css['tree-view']}`}>
 					<TreeNode
 						path={root}
+						type={'dir'}
 						{...libs.getNodeByPath(treeNodes, root)}
 					/>
 				</div>
