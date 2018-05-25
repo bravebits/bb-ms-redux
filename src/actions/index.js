@@ -5,19 +5,13 @@ import * as generalConstants from '../constants/general'
 import * as libs from '../libs/libs'
 import globalVars from '../libs/globalVariables'
 
+// silvertodo: saving data in nested type is strongly unrecommended, need to improve later
 export function init(options) {
 	const { root, path, selected, type } = options
-
 	return dispatch => {
 		type && dispatch(setFileType(type))
-
-		_.reduce(path.split('/').slice(0, -1), (path, dir) => {
-			path += dir + '/'
-			dispatch(getAllFiles(path))
-			selected && dispatch(expandTreeNode(path))
-			return path
-		}, '')
-
+		dispatch(getAllFiles(root))
+		dispatch(expandTreeNode(root))
 		root &&	dispatch(setRoot(root))
 		dispatch(setCurrentPath(path))
 		selected && dispatch(selectFile(selected))
@@ -42,7 +36,7 @@ export function getAllFiles(path) {
 }
 
 export function setCurrentPath(path) {
-	libs.setPathToLocal(path)
+	//libs.setPathToLocal(path)
 	return dispatch => {
 		dispatch({
 			type: actConstants.SET_CURRENT_PATH,
