@@ -103,7 +103,7 @@ export function updateSearchString(k) {
 export function addUploadingFile(files, file, willSelect) {
 	// Format the file name, replace all the special characters to _
 	const formatFileName = n => {
-		return n.replace(/[^\w\.]/gi, '_')
+		return n.replace(/[^\w]/gi, '_')
 	}
 
 	const splitExtension = (name) => {
@@ -121,10 +121,10 @@ export function addUploadingFile(files, file, willSelect) {
 		// In case there are some files with the same name with upload file, we need to add some index to upload file
 		// For example: image.jpg, image(1).jpg, image(2).jpg, etc.
 		const suffix = formatFileName(fName).substr(formatFileName(fileName).length)
-		const index = suffix === ''? 0 : parseInt(suffix.slice(1, -1))
+		const index = suffix === ''? 0 : parseInt(suffix.replace('_',''))
 		return Math.max(result, index)
 	}, -1)
-	const newFileName = lastIndex === -1? formatFileName(file.name) : `${formatFileName(fileName)}(${lastIndex + 1})${fileExt}`
+	const newFileName = lastIndex === -1? `${formatFileName(fileName)}${fileExt}` : `${formatFileName(fileName)}_${lastIndex + 1}${fileExt}`
 	// End
 
 	return {
