@@ -101,24 +101,30 @@ export function updateSearchString(k) {
 }
 
 export function addUploadingFile(files, file, willSelect) {
-	// Check file upload name
-	// In case there are some files with the same name with upload file, we need to add some index to upload file
-	// For example: image.jpg, image(1).jpg, image(2).jpg, etc.
+	// Format the file name, replace all the special characters to _
+	const formatFileName = n => {
+		return n.replace(/[^\w\.]/gi, '_')
+	}
+
 	const splitExtension = (name) => {
 		const pos = name.lastIndexOf('.')
 		return pos !== -1 ? [name.substr(0, pos), name.substr(pos)] : [name, '']
 	}
-	const [fileName, fileExt] = splitExtension(file.name)
+	const [fileName, fileExt] = splitExtension(file.name) // current file
 	const lastIndex = _.reduce(files, (result, f) => {
-		if (f.type !== 'file') return result
+		if (f.type !== 'file') return result // if it's not file, do nothing
 		const [fName, fExt] = splitExtension(f.name)
-		if (fileExt != fExt || fName.substr(0, fileName.length) !== fileName)
+		// Check file upload name
+		// if file name or file extension of the current uploading file is different from the file in the currentFiles, do nothing
+		if (fileExt != fExt || fName.substr(0, formatFileName(fileName).length) !== formatFileName(fileName)) 
 			return result
-		const suffix = fName.substr(fileName.length)
+		// In case there are some files with the same name with upload file, we need to add some index to upload file
+		// For example: image.jpg, image(1).jpg, image(2).jpg, etc.
+		const suffix = formatFileName(fName).substr(formatFileName(fileName).length)
 		const index = suffix === ''? 0 : parseInt(suffix.slice(1, -1))
 		return Math.max(result, index)
 	}, -1)
-	const newFileName = lastIndex === -1? file.name : `${fileName}(${lastIndex + 1})${fileExt}`
+	const newFileName = lastIndex === -1? formatFileName(file.name) : `${formatFileName(fileName)}(${lastIndex + 1})${fileExt}`
 	// End
 
 	return {
