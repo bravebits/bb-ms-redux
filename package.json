@@ -22,7 +22,7 @@
   "main": "lib/bb-media-selector.js",
   "scripts": {
     "test": "react-scripts test --env=jsdom",
-    "build:dev": "webpack --watch",
+    "build:dev": "webpack --watch --mode=development",
     "build": "NODE_ENV=production webpack -p",
     "start": "concurrently \"npm run build\" \"NODE_ENV=production node server\"",
     "dev": "concurrently \"npm run build:dev\" \"node server\""

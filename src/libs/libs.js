@@ -97,21 +97,3 @@ export function parseJSON(response) {
 	}
 	return result
 }
-
-// minor effect this is for extfw2 modal height changing
-const setHeightForModal = () => {
-	const modal = window.top.document.querySelectorAll('#imageModal_jform_images_image_intro')[0]
-	if(modal) {
-		const modalBody = modal.querySelectorAll('.modal-body')[0]
-		if(modalBody) {
-			modalBody.style.height = '100%'
-			modalBody.style.maxHeight = 'none'
-			const iframe = modalBody.querySelectorAll('iframe')[0]
-			if(iframe) {
-				iframe.style.transition = '0.1s'
-				iframe.style.height = window.top.screen.height * 0.7 + 'px'
-			}
-		}
-	}
-}
-setHeightForModal()
