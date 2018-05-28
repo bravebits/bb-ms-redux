@@ -9,26 +9,30 @@ import globalVars from '../libs/globalVariables'
 export function init(options) {
 	const { root, path, selected, type } = options
 	return dispatch => {
-		// type && dispatch(setFileType(type))
-		// console.log('patthhh', path)
-		// _.reduce(path.split('/').slice(0, -1), (path, dir) => {
-		// 	path += dir + '/'
-		// 	dispatch(getAllFiles(path))
-		// 	selected && dispatch(expandTreeNode(path))
-		// 	return path
-		// }, '')
-
-		// root &&	dispatch(setRoot(root))
-		// dispatch(setCurrentPath(path))
-		// selected && dispatch(selectFile(selected))
-
-
 		type && dispatch(setFileType(type))
-		dispatch(getAllFiles(root))
-		dispatch(expandTreeNode(root))
-		root &&	dispatch(setRoot(root))
-		dispatch(setCurrentPath(root))
-		selected && dispatch(selectFile(selected))
+		const getFilesAndExpand = p => new Promise(resolve => {
+			resolve(dispatch(getAllFiles(p)))
+		})
+		const tasks = []
+		_.reduce(path.split('/').slice(0, -1), (path, dir) => {
+			path += dir + '/'
+			if(path !== '/') {
+				tasks.push(getFilesAndExpand(path))
+			}
+			return path
+		}, '')
+		Promise.all(tasks).then(() => {
+			root &&	dispatch(setRoot(root))
+			_.reduce(path.split('/').slice(0, -1), (path, dir) => {
+				path += dir + '/'
+				if(path !== '/') {
+					dispatch(expandTreeNode(path))
+				}
+				return path
+			}, '')
+			dispatch(setCurrentPath(path))
+			selected && dispatch(selectFile(selected))
+		})
 	}
 }
 
@@ -578,7 +582,6 @@ export function setRoot(path) {
 			type: actConstants.SET_ROOT,
 			path
 		})
-		dispatch(expandTreeNode(path))
 	}
 }
 
