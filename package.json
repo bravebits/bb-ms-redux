@@ -1,6 +1,6 @@
 {
   "name": "bb-ms-redux",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "private": true,
   "dependencies": {
     "express": "^4.16.3",
