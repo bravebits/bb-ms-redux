@@ -9,11 +9,25 @@ import globalVars from '../libs/globalVariables'
 export function init(options) {
 	const { root, path, selected, type } = options
 	return dispatch => {
+		// type && dispatch(setFileType(type))
+		// console.log('patthhh', path)
+		// _.reduce(path.split('/').slice(0, -1), (path, dir) => {
+		// 	path += dir + '/'
+		// 	dispatch(getAllFiles(path))
+		// 	selected && dispatch(expandTreeNode(path))
+		// 	return path
+		// }, '')
+
+		// root &&	dispatch(setRoot(root))
+		// dispatch(setCurrentPath(path))
+		// selected && dispatch(selectFile(selected))
+
+
 		type && dispatch(setFileType(type))
 		dispatch(getAllFiles(root))
 		dispatch(expandTreeNode(root))
 		root &&	dispatch(setRoot(root))
-		dispatch(setCurrentPath(path))
+		dispatch(setCurrentPath(root))
 		selected && dispatch(selectFile(selected))
 	}
 }
@@ -36,7 +50,7 @@ export function getAllFiles(path) {
 }
 
 export function setCurrentPath(path) {
-	//libs.setPathToLocal(path)
+	libs.setPathToLocal(path)
 	return dispatch => {
 		dispatch({
 			type: actConstants.SET_CURRENT_PATH,
@@ -156,7 +170,7 @@ export function handleUploadFile(path, file, fileName, onProcess) {
 					addMessage({
 						type: generalConstants.TOAST_SUCCESS,
 						content: 'Upload successfully.',
-						duration: 1000
+						duration: 2000
 					})
 				)
 			} else {
@@ -166,7 +180,7 @@ export function handleUploadFile(path, file, fileName, onProcess) {
 						type: generalConstants.TOAST_ERROR,
 						content:
 							'File is not uploaded, please recheck the file type.',
-						duration: 1000
+						duration: 2000
 					})
 				)
 			}
@@ -227,7 +241,7 @@ export function createFolder(path, files) {
 					addMessage({
 						type: generalConstants.TOAST_SUCCESS,
 						content: 'Create folder successfully.',
-						duration: 1000
+						duration: 2000
 					})
 				)
 			}
@@ -245,7 +259,8 @@ export function onRenameFolderSuccess(on, nn) {
 
 export function renameFolder(path, newPath, currentPath, onRenameFail) {
 	return function(dispatch) {
-		if (path !== newPath) {
+		const folderName = newPath.substring(newPath.lastIndexOf('/')+1, newPath.length)
+		if (path !== newPath && !/[^\w]/.test(folderName)) {
 			const oldName = path.replace(currentPath, '')
 			const newName = newPath.replace(currentPath, '')
 			joomlaApi.renameFolder(path, newPath).done(res => {
@@ -256,7 +271,7 @@ export function renameFolder(path, newPath, currentPath, onRenameFail) {
 						addMessage({
 							type: generalConstants.TOAST_SUCCESS,
 							content: 'Rename folder successfully.',
-							duration: 1000
+							duration: 2000
 						})
 					)
 				} else {
@@ -266,11 +281,20 @@ export function renameFolder(path, newPath, currentPath, onRenameFail) {
 							type: generalConstants.TOAST_ERROR,
 							content:
 								'Rename folder failed, please check it again.',
-							duration: 1000
+							duration: 2000
 						})
 					)
 				}
 			})
+		} else {
+			onRenameFail()
+			dispatch(
+				addMessage({
+					type: generalConstants.TOAST_ERROR,
+					content: 'Rename folder failed, folder name is not allowed to have special characters.',
+					duration: 2000
+				})
+			)
 		}
 	}
 }
@@ -286,7 +310,8 @@ export function onRenameFileSuccess(on, nn) {
 export function renameFile(path, newPath, currentPath, onRenameFail) {
 	return function(dispatch, getState) {
 		const selectedFile = getState().fileReducer.selectedFile
-		if (path !== newPath) {
+		const fileName = newPath.substring(newPath.lastIndexOf('/')+1, newPath.lastIndexOf('.'))
+		if (path !== newPath && !/[^\w]/.test(fileName)) {
 			const oldName = path.replace(currentPath, '')
 			const newName = newPath.replace(currentPath, '')
 			joomlaApi.renameFile(path, newPath).done(res => {
@@ -298,7 +323,7 @@ export function renameFile(path, newPath, currentPath, onRenameFail) {
 						addMessage({
 							type: generalConstants.TOAST_SUCCESS,
 							content: 'Rename file successfully.',
-							duration: 1000
+							duration: 2000
 						})
 					)
 				} else {
@@ -307,11 +332,20 @@ export function renameFile(path, newPath, currentPath, onRenameFail) {
 						addMessage({
 							type: generalConstants.TOAST_ERROR,
 							content: 'Rename file failed, please check again.',
-							duration: 1000
+							duration: 2000
 						})
 					)
 				}
 			})
+		} else {
+			onRenameFail()
+			dispatch(
+				addMessage({
+					type: generalConstants.TOAST_ERROR,
+					content: 'Rename file failed, file name is not allowed to have special characters.',
+					duration: 2000
+				})
+			)
 		}
 	}
 }
@@ -377,7 +411,7 @@ export function deleteFile(path, currentPath, mode) {
 							addMessage({
 								type: generalConstants.TOAST_SUCCESS,
 								content: 'Delete successfully.',
-								duration: 1000
+								duration: 2000
 							})
 						)
 					}
@@ -415,7 +449,7 @@ export function deleteFolder(path, currentPath, mode) {
 							addMessage({
 								type: generalConstants.TOAST_SUCCESS,
 								content: 'Delete folder successfully.',
-								duration: 1000
+								duration: 2000
 							})
 						)
 					}
@@ -488,7 +522,7 @@ export function deleteMultiFiles(
 				addMessage({
 					type: generalConstants.TOAST_SUCCESS,
 					content: 'Delete files successfully.',
-					duration: 1000
+					duration: 2000
 				})
 			)
 		}
