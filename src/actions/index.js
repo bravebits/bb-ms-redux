@@ -23,6 +23,7 @@ export function init(options) {
 		}, '')
 		Promise.all(tasks).then(() => {
 			root &&	dispatch(setRoot(root))
+			dispatch(getAllFiles(root))
 			_.reduce(path.split('/').slice(0, -1), (path, dir) => {
 				path += dir + '/'
 				if(path !== '/') {
