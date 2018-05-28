@@ -34,7 +34,9 @@ class TreeNode extends Component {
 	}
 
 	componentDidMount() {
-		this.props.getAllFiles(this.props.path)
+		if(this.props.type === 'dir' && !this.props.isExpanded) {
+			this.props.getAllFiles(this.props.path)
+		}
 	}
 	render() {
 		if(doesNodeContainsDirs(this)) {

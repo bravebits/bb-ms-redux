@@ -10,7 +10,7 @@ const defaultState = {
 	chosenFile: null,
 	treeNodes: {
 		isExpanded: true,
-		name: '/root',
+		name: '',
 		type: 'dir'
 	},
 	root: '/',
