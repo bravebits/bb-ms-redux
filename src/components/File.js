@@ -139,8 +139,8 @@ class File extends Component {
 						<span>{this.props.data.file_size}</span>
 					</div>
 					<div className={`${css['list-media__item__remove']}`}>
-						<a href="#" onClick={this.deleteFile}>
-							<i className="fa fa-trash-o" />
+						<a href="javascript:void(0)" onClick={this.deleteFile}>
+							<i className="fa fa-trash-o"  />
 						</a>
 					</div>
 				</div>
@@ -209,7 +209,7 @@ class File extends Component {
 						<span>{this.props.data.file_size}</span>
 					</div>
 					<div className={`${css['list-media__item__remove']}`}>
-						<a href="#" onClick={this.deleteFile}>
+						<a href="javascript:void(0)" onClick={this.deleteFile}>
 							<i className="fa fa-trash-o" />
 						</a>
 					</div>
