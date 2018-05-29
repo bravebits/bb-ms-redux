@@ -122,7 +122,7 @@ export function updateSearchString(k) {
 export function addUploadingFile(files, file, willSelect) {
 	// Format the file name, replace all the special characters to _
 	const formatFileName = n => {
-		return n.replace(/[^\w]/gi, '_')
+		return n.replace(/[^\w]/gi, '_').replace(/(_){1,}/g, '$1')
 	}
 
 	const splitExtension = (name) => {
