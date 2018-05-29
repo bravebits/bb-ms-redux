@@ -122,7 +122,7 @@ export function updateSearchString(k) {
 export function addUploadingFile(files, file, willSelect) {
 	// Format the file name, replace all the special characters to _
 	const formatFileName = n => {
-		return n.replace(/[^\w]/gi, '_')
+		return n.replace(/[^\w]/gi, '_').replace(/(_){1,}/g, '$1')
 	}
 
 	const splitExtension = (name) => {
@@ -293,13 +293,15 @@ export function renameFolder(path, newPath, currentPath, onRenameFail) {
 			})
 		} else {
 			onRenameFail()
-			dispatch(
-				addMessage({
-					type: generalConstants.TOAST_ERROR,
-					content: 'Rename folder failed, folder name is not allowed to have special characters.',
-					duration: 2000
-				})
-			)
+			if(/[^\w]/.test(folderName)) {
+				dispatch(
+					addMessage({
+						type: generalConstants.TOAST_ERROR,
+						content: 'Rename folder failed, folder name is not allowed to have special characters.',
+						duration: 2000
+					})
+				)
+			}
 		}
 	}
 }
@@ -344,13 +346,15 @@ export function renameFile(path, newPath, currentPath, onRenameFail) {
 			})
 		} else {
 			onRenameFail()
-			dispatch(
-				addMessage({
-					type: generalConstants.TOAST_ERROR,
-					content: 'Rename file failed, file name is not allowed to have special characters.',
-					duration: 2000
-				})
-			)
+			if(/[^\w]/.test(fileName)) {
+				dispatch(
+					addMessage({
+						type: generalConstants.TOAST_ERROR,
+						content: 'Rename file failed, file name is not allowed to have special characters.',
+						duration: 2000
+					})
+				)
+			}
 		}
 	}
 }
