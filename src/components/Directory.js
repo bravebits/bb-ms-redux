@@ -121,7 +121,7 @@ class Directory extends Component {
 					<div className={`${css['list-media__item__dimensions']}`} />
 					<div className={`${css['list-media__item__file-size']}`} />
 					<div className={`${css['list-media__item__remove']}`}>
-						<a href="#" onClick={this.deleteFolder}>
+						<a href="javascript:void(0)" onClick={this.deleteFolder}>
 							<i className="fa fa-trash-o"></i>
 						</a>
 					</div>
