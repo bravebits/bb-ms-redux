@@ -394,6 +394,14 @@ iframe .wrapper {
 	text-align: left;
     font-size: 12px;
 }
+
+.media-selector .list-media.list .list-media__item__title span {
+	flex: 2;
+	text-align: left;
+	font-size: 12px;
+	word-break: break-all;
+}
+
 .media-selector .list-media.list .list-media__item__dimensions {
 	flex: 1;
 	display: block; }
