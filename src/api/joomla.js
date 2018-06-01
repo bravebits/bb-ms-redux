@@ -28,7 +28,8 @@ export const handleUploadFile = (
 	reader.readAsDataURL(file)
 	return new Promise((resolve, reject) => {
 		reader.onload = upload => {
-			if (!file.type || !upload.target.result) {
+			const hasExtension = file.name.substring(file.name.lastIndexOf('.'), file.name.length - 1).length >= 3
+			if ((!file.type && !hasExtension) || !upload.target.result) {
 				return reject('No file selected')
 			}
 			if (
