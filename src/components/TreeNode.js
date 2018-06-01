@@ -48,6 +48,7 @@ class TreeNode extends Component {
 								.path === this.props.currentPath
 								? css['active']
 								: ''}`}
+							onClick={this.browseFiles}
 						>
 							<div className={`${css['detail']}`}>
 								<i
@@ -55,7 +56,6 @@ class TreeNode extends Component {
 									className={'fa fa-minus-square-o'}
 								/>
 								<span
-									onClick={this.browseFiles}
 									className={`${css['marg-0']}`}
 								>
 									{' '}{this.props.name.replace(/\//g,'')}
@@ -83,6 +83,7 @@ class TreeNode extends Component {
 							? css['active']
 							: ''}`}
 						key={this.props.name}
+						onClick={this.browseFiles}
 					>
 						{this.props.type === 'dir'
 							? <div className={`${css['detail']}`}>
@@ -91,7 +92,6 @@ class TreeNode extends Component {
 										className="fa fa-plus-square-o"
 									/>
 									<span
-										onClick={this.browseFiles}
 										className={`${css['marg-0']}`}
 									>
 										{' '}{this.props.name.replace(/\//g,'')}
@@ -111,13 +111,13 @@ class TreeNode extends Component {
 								.path === this.props.currentPath
 								? css['active']
 								: ''}`}
+							onClick={this.browseFiles}
 						>
 							<div className={`${css['detail']}`}>
 								<i
 									className={'fa fa-square-o'}
 								/>
 								<span
-									onClick={this.browseFiles}
 									className={`${css['marg-0']}`}
 								>
 									{' '}{this.props.name.replace(/\//g,'')}
