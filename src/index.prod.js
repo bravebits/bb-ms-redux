@@ -5,7 +5,8 @@ import generalReducer from './reducers/general-reducer'
 import fileReducer from './reducers/file-reducer'
 import App from './containers/App'
 import thunk from 'redux-thunk'
-console.log('version 1.2.1')
+import logger from 'redux-logger'
+
 const store = createStore(
 	combineReducers({ generalReducer, fileReducer }),
 	applyMiddleware(thunk)
