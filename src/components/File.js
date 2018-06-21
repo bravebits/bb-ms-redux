@@ -218,8 +218,18 @@ class File extends Component {
 		)
 
 		switch(this.props.fileType) {
-			case generalConstants.TYPE_IMAGE: return mediaContent
-			case generalConstants.TYPE_FONT: return fileContent
+			case generalConstants.TYPE_IMAGE:
+				if (libs.isMedia(this.props.data.name)) { // fallback filter on client
+					return mediaContent
+				} else {
+					return null
+				}
+			case generalConstants.TYPE_FONT:
+				if (libs.isMedia(this.props.data.name)) {
+					return null
+				} else {
+					return fileContent
+				}
 			case generalConstants.TYPE_FILE: 
 				if (libs.isMedia(this.props.data.name)) {
 					return mediaContent
