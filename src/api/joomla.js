@@ -1,5 +1,7 @@
 import $ from 'jquery'
 import globalVars from '../libs/globalVariables'
+import { formatType } from '../libs/libs'
+
 /**
  * get all files and directories in /...
  * @param path
@@ -22,7 +24,8 @@ export const handleUploadFile = (
 	file,
 	fileName,
 	onProcess,
-	allowType = []
+	allowType = [],
+	type // font || image
 ) => {
 	const reader = new FileReader()
 	reader.readAsDataURL(file)
@@ -43,8 +46,10 @@ export const handleUploadFile = (
 				dir: path,
 				data_uri: upload.target.result,
 				filename: fileName,
-				filetype: file.type
+				filetype: file.type,
+				type
 			}
+			console.log('jskldfjdslf', formatType(globalVars.get('type')))
 			uploadFile(data, resolve, reject, onProcess)
 		}
 	}).catch(err => {

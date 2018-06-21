@@ -4,12 +4,18 @@ import _ from 'underscore'
 import * as generalConstants from '../constants/general'
 import * as libs from '../libs/libs'
 import globalVars from '../libs/globalVariables'
-
+import { parseType, formatType } from '../libs/libs'
+/**
+ * For the next time REFACTOR
+ */
 // silvertodo: saving data in nested type is strongly unrecommended, need to improve later
+// globalVars violates Redux architect, we should take only one single source of truth, move it to Redux store
+
+
 export function init(options) {
 	const { root, path, selected, type } = options
 	return dispatch => {
-		type && dispatch(setFileType(type))
+		type && dispatch(setFileType(parseType(type)))
 		const getFilesAndExpand = p => new Promise(resolve => {
 			resolve(dispatch(getAllFiles(p)))
 		})
@@ -22,8 +28,13 @@ export function init(options) {
 			return path
 		}, '')
 		Promise.all(tasks).then(() => {
-			root &&	dispatch(setRoot(root))
-			dispatch(getAllFiles(root))
+			if(root) {
+				dispatch(setRoot(root))
+				dispatch(getAllFiles(root))
+			} else {
+				dispatch(setRoot('/'))
+				dispatch(getAllFiles('/'))
+			}
 			_.reduce(path.split('/').slice(0, -1), (path, dir) => {
 				path += dir + '/'
 				if(path !== '/') {
@@ -40,8 +51,7 @@ export function init(options) {
 export function getAllFiles(path) {
 	return (dispatch, getState) => {
 		const { fileType } = getState().fileReducer
-
-		joomlaApi.getAllFiles(path, fileType).done(res => {
+		joomlaApi.getAllFiles(path, formatType(fileType)).done(res => {
 			dispatch({
 				type:actConstants.GET_ALL_FILES,
 				path,
@@ -162,8 +172,9 @@ export function onUploadSuccess(f) {
 }
 
 export function handleUploadFile(path, file, fileName, onProcess) {
-	return function(dispatch) {
-		joomlaApi.handleUploadFile(path, file, fileName, onProcess).then(res => {
+	return function(dispatch, getState) {
+		const type = formatType(getState().fileReducer.fileType)
+		joomlaApi.handleUploadFile(path, file, fileName, onProcess, [], type).then(res => {
 			const result = libs.parseJSON(res)
 			if (result && result.message === 'done') {
 				const uploadedFile = _.find(result.list, item => {
