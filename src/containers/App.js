@@ -18,8 +18,9 @@ class App extends Component {
 
 	componentWillMount() {
 		globalVars.setFromObject(this.props, ['config', 'fileType', 'enableFooter', 'enableHeader'])
-
 		let { folder, selected, type } = libs.getParamsFromURL()
+		globalVars.set('type', type)
+		
 		folder = this.props.folder || folder
 		let path = selected? selected.substring(0, selected.lastIndexOf('/') + 1)
 			: libs.getPathFromLocal()

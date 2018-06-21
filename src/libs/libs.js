@@ -97,3 +97,19 @@ export function parseJSON(response) {
 	}
 	return result
 }
+
+export const parseType = type => {
+	switch(type) {
+		case 'image': return 'TYPE_IMAGE'
+		case 'font': return 'TYPE_FONT'
+		default: return type
+	}
+}
+
+export const formatType = type => {
+	switch(type) {
+		case 'TYPE_IMAGE': return 'image'
+		case 'TYPE_FONT': return 'font'
+		default: return type
+	}
+}
