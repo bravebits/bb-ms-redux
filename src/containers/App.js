@@ -26,7 +26,7 @@ class App extends Component {
 			: libs.getPathFromLocal()
 		if (folder !== undefined && !path.includes(folder)) path = folder
 		const initOptions = {
-			type,
+			type: globalVars.get('type') || this.props.fileType,
 			root: libs.standardizedPath(folder, 'dir'),
 			path: libs.standardizedPath(path, 'dir'),
 			selected: libs.standardizedPath(selected, 'file')
