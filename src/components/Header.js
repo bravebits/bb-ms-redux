@@ -22,7 +22,7 @@ class Header extends Component {
 					</p>
 				</div>
 				<div className={`${css['text-align--right']} ${css['flex1']}`}>
-					<a href="#" onClick={this.props.onCancel}>
+					<a href="javascript:void(0)" onClick={this.props.onCancel}>
 						<i className="fa fa-close"></i>
 					</a>
 				</div>
