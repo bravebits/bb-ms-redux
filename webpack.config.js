@@ -16,7 +16,7 @@ const reactDOMExternal = {
 }
 
 const jqueryExternal = {
-	root: '$',
+	root: 'jQuery',
 	commonjs2: 'jquery',
 	commonjs: 'jquery',
 	amd: 'jquery'
