@@ -16,7 +16,7 @@ export function isMedia(name) {
 	return name
 		.toLowerCase()
 		.match(
-			/.(bmp|gif|ico|jpg|jpeg|png|svg)$/
+			/\.(bmp|gif|ico|jpe?g|png|svg|tiff?|webp)$/
 		)
 }
 
