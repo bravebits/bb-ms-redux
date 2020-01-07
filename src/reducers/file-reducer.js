@@ -15,8 +15,7 @@ const defaultState = {
 	},
 	root: '/',
 	currentPath: '',
-	searchString: '',
-	fileType: ''
+	searchString: ''
 }
 
 export default function(state = defaultState, action) {
@@ -120,9 +119,6 @@ export default function(state = defaultState, action) {
 			return newState
 		case actConstants.SET_ROOT:
 			newState.root = action.path
-			return newState
-		case actConstants.SET_FILE_TYPE:
-			newState.fileType = action.fileType
 			return newState
 		default:
 			return state

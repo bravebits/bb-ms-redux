@@ -4,7 +4,7 @@ import _ from 'underscore'
 import * as generalConstants from '../constants/general'
 import * as libs from '../libs/libs'
 import globalVars from '../libs/globalVariables'
-import { parseType, formatType } from '../libs/libs'
+
 /**
  * For the next time REFACTOR
  */
@@ -13,9 +13,8 @@ import { parseType, formatType } from '../libs/libs'
 
 
 export function init(options) {
-	const { root, path, selected, type } = options
+	const { root, path, selected } = options
 	return dispatch => {
-		type && dispatch(setFileType(parseType(type)))
 		const getFilesAndExpand = p => new Promise(resolve => {
 			resolve(dispatch(getAllFiles(p)))
 		})
@@ -50,8 +49,7 @@ export function init(options) {
 
 export function getAllFiles(path) {
 	return (dispatch, getState) => {
-		const { fileType } = getState().fileReducer
-		joomlaApi.getAllFiles(path, formatType(fileType)).done(res => {
+		joomlaApi.getAllFiles(path).done(res => {
 			dispatch({
 				type:actConstants.GET_ALL_FILES,
 				path,
@@ -145,7 +143,7 @@ export function addUploadingFile(files, file, willSelect) {
 		const [fName, fExt] = splitExtension(f.name)
 		// Check file upload name
 		// if file name or file extension of the current uploading file is different from the file in the currentFiles, do nothing
-		if (fileExt != fExt || fName.substr(0, formatFileName(fileName).length) !== formatFileName(fileName)) 
+		if (fileExt != fExt || fName.substr(0, formatFileName(fileName).length) !== formatFileName(fileName))
 			return result
 		// In case there are some files with the same name with upload file, we need to add some index to upload file
 		// For example: image.jpg, image(1).jpg, image(2).jpg, etc.
@@ -173,8 +171,7 @@ export function onUploadSuccess(f) {
 
 export function handleUploadFile(path, file, fileName, onProcess) {
 	return function(dispatch, getState) {
-		const type = formatType(getState().fileReducer.fileType)
-		joomlaApi.handleUploadFile(path, file, fileName, onProcess, [], type).then(res => {
+		joomlaApi.handleUploadFile(path, file, fileName, onProcess, []).then(res => {
 			const result = libs.parseJSON(res)
 			if (result && result.message === 'done') {
 				const uploadedFile = _.find(result.list, item => {
@@ -507,26 +504,14 @@ export function deleteMultiFiles(
 		const cResult = confirm('Are you sure you want to delete?')
 		if (cResult) {
 			for (let i = 0; i < files.length; i++) {
-				if (files[i].match(/\./)) {
-					if (globalVars.get('fileType') === generalConstants.TYPE_FILE) {
-						dispatch(
-							deleteFile(
-								files[i],
-								currentPath,
-								'multi'
-							)
+				if (files[i].match(/\.[a-z0-9]{1,6}$/i)) {
+					dispatch(
+						deleteFile(
+							files[i],
+							currentPath,
+							'multi'
 						)
-					} else {
-						if (libs.isMedia(files[i])) {
-							dispatch(
-								deleteFile(
-									files[i],
-									currentPath,
-									'multi'
-								)
-							)
-						}
-					}
+					)
 				} else {
 					dispatch(
 						deleteFolder(
@@ -598,12 +583,5 @@ export function setRoot(path) {
 			type: actConstants.SET_ROOT,
 			path
 		})
-	}
-}
-
-export function setFileType(fileType) {
-	return {
-		type: actConstants.SET_FILE_TYPE,
-		fileType: fileType
 	}
 }

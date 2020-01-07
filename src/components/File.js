@@ -77,85 +77,10 @@ class File extends Component {
 		const { selectedFile, selectedFiles } = this.props
 		const path = this.props.currentPath + this.props.data.name
 		const isSelected = path === selectedFile
-		const isMultiSelected =
-			selectedFiles && selectedFiles.indexOf(path) >= 0
+		const isMultiSelected = selectedFiles && selectedFiles.indexOf(path) >= 0
 
-		const fileContent = (<div
-			className={`${css['list-media__item']}  ${this.props.isBack
-				? css['back']
-				: ''}`}
-		>
-			<div
-				className={`
-					${css['content']}
-					${isSelected ? css['active'] : ''}
-					${isMultiSelected ? css['checked'] : ''}
-				`}
-			>
-				<div className={`${css['list-media__item__checkbox']}`}>
-					<div className={`${css['css-checkbox']}`}>
-						<input
-							onClick={this.selectMultiFile}
-							id="option"
-							type="checkbox"
-							name="field"
-							value="option"
-							checked={isMultiSelected ? true : false}
-						/>
-						<label htmlFor="option">
-							<span>
-								<span />
-							</span>
-						</label>
-					</div>
-				</div>
-				<div className={`${css['list-media__item__avatar']}`}
-					onDoubleClick={this.chooseFile}
-					onClick={this.selectFile}
-				>
-					<span className={`${css['file-type']}`}>
-						{this.props.data.name.match(/\..*$/) ? (
-							this.props.data.name
-								.match(/\..*$/)[0]
-								.toUpperCase()
-						) : (
-							generalConstants.UNKNOWN_FILE_TYPE
-						)}
-					</span>
-				</div>
-				<div className={`${css['list-media__item__title']}`}>
-					<span
-						ref={r => (this.name = r)}
-						onBlur={this.handleBlur}
-						onDoubleClick={this.enableEditting}
-						onKeyDown={this.handleOnKeyDown}
-					>
-						{this.props.data.name}
-					</span>
-				</div>
-				<div className={`${css['list-media__item__dimensions']}`}>
-					{libs.isMedia(this.props.data.name) ? (
-						<span>{`${this.props.data.image_width}x${this.props
-							.data.image_height}`}</span>
-					) : null}
-				</div>
-				<div className={`${css['list-media__item__file-size']}`}>
-					<span>{this.props.data.file_size}</span>
-				</div>
-				<div className={`${css['list-media__item__remove']}`}>
-					<a href="javascript:void(0)" onClick={this.deleteFile}>
-						<i className="fa fa-trash-o" />
-					</a>
-				</div>
-			</div>
-		</div>)
-
-		const mediaContent = (
-			<div
-				className={`${css['list-media__item']}  ${this.props.isBack
-					? css['back']
-					: ''}`}
-			>
+		const fileContent = (
+			<div className={`${css['list-media__item']}  ${this.props.isBack ? css['back'] : ''}`}>
 				<div
 					className={`
 						${css['content']}
@@ -180,13 +105,85 @@ class File extends Component {
 							</label>
 						</div>
 					</div>
-					<div className={`${css['list-media__item__avatar']}`}
+					<div
+						className={`${css['list-media__item__avatar']}`}
+						onDoubleClick={this.chooseFile}
+						onClick={this.selectFile}
+					>
+						<span className={`${css['file-type']}`}>
+							{this.props.data.name.match(/\..*$/) ? (
+								this.props.data.name
+									.match(/\..*$/)[0]
+									.toUpperCase()
+							) : (
+								generalConstants.UNKNOWN_FILE_TYPE
+							)}
+						</span>
+					</div>
+					<div className={`${css['list-media__item__title']}`}>
+						<span
+							ref={r => (this.name = r)}
+							onBlur={this.handleBlur}
+							onDoubleClick={this.enableEditting}
+							onKeyDown={this.handleOnKeyDown}
+						>
+							{this.props.data.name}
+						</span>
+					</div>
+					<div className={`${css['list-media__item__dimensions']}`}>
+						{this.props.data.image_width && this.props.data.image_height ? (
+							<span>{
+								`${this.props.data.image_width}x${this.props.data.image_height}`
+							}</span>
+						) : null}
+					</div>
+					<div className={`${css['list-media__item__file-size']}`}>
+						<span>{this.props.data.file_size}</span>
+					</div>
+					<div className={`${css['list-media__item__remove']}`}>
+						<a href="javascript:void(0)" onClick={this.deleteFile}>
+							<i className="fa fa-trash-o" />
+						</a>
+					</div>
+				</div>
+			</div>
+		)
+
+		const imageContent = (
+			<div className={`${css['list-media__item']}  ${this.props.isBack ? css['back'] : ''}`}>
+				<div
+					className={`
+						${css['content']}
+						${isSelected ? css['active'] : ''}
+						${isMultiSelected ? css['checked'] : ''}
+					`}
+				>
+					<div className={`${css['list-media__item__checkbox']}`}>
+						<div className={`${css['css-checkbox']}`}>
+							<input
+								onClick={this.selectMultiFile}
+								id="option"
+								type="checkbox"
+								name="field"
+								value="option"
+								checked={isMultiSelected ? true : false}
+							/>
+							<label htmlFor="option">
+								<span>
+									<span />
+								</span>
+							</label>
+						</div>
+					</div>
+					<div
+						className={`${css['list-media__item__avatar']}`}
 						onDoubleClick={this.chooseFile}
 						onClick={this.selectFile}
 					>
 						<img
-							src={`${globalVars.get('config').baseURL}${this.props
-								.currentPath}${this.props.data.name}`}
+							src={
+								`${globalVars.get('config').baseURL}${this.props.currentPath}${this.props.data.name}`
+							}
 						/>
 					</div>
 					<div className={`${css['list-media__item__title']}`}>
@@ -200,9 +197,10 @@ class File extends Component {
 						</span>
 					</div>
 					<div className={`${css['list-media__item__dimensions']}`}>
-						{libs.isMedia(this.props.data.name) ? (
-							<span>{`${this.props.data.image_width}x${this.props
-								.data.image_height}`}</span>
+						{this.props.data.image_width && this.props.data.image_height ? (
+							<span>{
+								`${this.props.data.image_width}x${this.props.data.image_height}`}
+							</span>
 						) : null}
 					</div>
 					<div className={`${css['list-media__item__file-size']}`}>
@@ -217,27 +215,7 @@ class File extends Component {
 			</div>
 		)
 
-		switch(this.props.fileType) {
-			case generalConstants.TYPE_IMAGE:
-				if (libs.isMedia(this.props.data.name)) { // fallback filter on client
-					return mediaContent
-				} else {
-					return null
-				}
-			case generalConstants.TYPE_FONT:
-				if (libs.isMedia(this.props.data.name)) {
-					return null
-				} else {
-					return fileContent
-				}
-			case generalConstants.TYPE_FILE: 
-				if (libs.isMedia(this.props.data.name)) {
-					return mediaContent
-				} else {
-					return fileContent
-				}
-			default: return null
-		}
+		return libs.isImage(this.props.data.name) ? imageContent : fileContent
 	}
 }
 
@@ -245,8 +223,7 @@ function mapStateToProps(state) {
 	return {
 		currentPath: state.fileReducer.currentPath,
 		selectedFile: state.fileReducer.selectedFile,
-		selectedFiles: state.fileReducer.selectedFiles,
-		fileType: state.fileReducer.fileType
+		selectedFiles: state.fileReducer.selectedFiles
 	}
 }
 

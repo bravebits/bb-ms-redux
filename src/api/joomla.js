@@ -1,15 +1,14 @@
 import $ from 'jquery'
 import globalVars from '../libs/globalVariables'
-import { formatType } from '../libs/libs'
 
 /**
  * get all files and directories in /...
  * @param path
  * @return {$.ajax}: Use .done(res => {}) to handle this ajax request
  */
-export const getAllFiles = (path = '/', type) =>
+export const getAllFiles = (path = '/') =>
 	$.ajax({
-		url: `${globalVars.get('config').getAllFiles}${path === '/' ? '' : '&dir=' + path}&type=${type}`
+		url: `${globalVars.get('config').getAllFiles}${path === '/' ? '' : '&dir=' + path}`
 	})
 
 /**
@@ -24,8 +23,7 @@ export const handleUploadFile = (
 	file,
 	fileName,
 	onProcess,
-	allowType = [],
-	type // font || image
+	allowType = []
 ) => {
 	const reader = new FileReader()
 	reader.readAsDataURL(file)
@@ -46,10 +44,8 @@ export const handleUploadFile = (
 				dir: path,
 				data_uri: upload.target.result,
 				filename: fileName,
-				filetype: file.type,
-				type
+				filetype: file.type
 			}
-			console.log('jskldfjdslf', formatType(globalVars.get('type')))
 			uploadFile(data, resolve, reject, onProcess)
 		}
 	}).catch(err => {

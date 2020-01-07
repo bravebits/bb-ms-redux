@@ -12,8 +12,7 @@ const initialState = {
 	},
 	root: '/',
 	currentPath: '',
-	searchString: '',
-	fileType: ''
+	searchString: ''
 }
 
 

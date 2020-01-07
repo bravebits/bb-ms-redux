@@ -17,21 +17,27 @@ class App extends Component {
 	}
 
 	componentWillMount() {
-		globalVars.setFromObject(this.props, ['config', 'fileType', 'enableFooter', 'enableHeader'])
-		let { folder, selected, type } = libs.getParamsFromURL()
-		globalVars.set('type', type)
-		
+		// Make some props globally available.
+		globalVars.setFromObject(this.props, ['config', 'enableFooter', 'enableHeader'])
+
+		// Get additional props from query parameters.
+		let { folder, selected } = libs.getParamsFromURL()
+
+		// Prepare root folder and current path.
 		folder = this.props.folder || folder
-		let path = selected? selected.substring(0, selected.lastIndexOf('/') + 1)
-			: libs.getPathFromLocal()
-		if (folder !== undefined && !path.includes(folder)) path = folder
-		const initOptions = {
-			type: globalVars.get('type') || this.props.fileType,
+		let path = selected ? selected.substring(0, selected.lastIndexOf('/') + 1) : libs.getPathFromLocal()
+
+		// Make sure current path is inside root folder.
+		if (folder !== undefined && !path.includes(folder)) {
+			path = folder
+		}
+
+		// Initialize props.
+		this.props.init({
 			root: libs.standardizedPath(folder, 'dir'),
 			path: libs.standardizedPath(path, 'dir'),
 			selected: libs.standardizedPath(selected, 'file')
-		}
-		this.props.init(initOptions)
+		})
 	}
 
 	render() {

@@ -19,7 +19,6 @@ export default class MediaSelector extends React.Component {
 				<App
 					folder={this.props.folder}
 					config={this.props.config}
-					fileType={this.props.fileType}
 					enableHeader={this.props.enableHeader}
 					enableFooter={this.props.enableFooter}
 				/>

@@ -32,7 +32,6 @@ render(
 	<Provider store={store}>
 		<App
 			config={config}
-			fileType={'TYPE_FILE'}
 			enableHeader={false}
 			enableFooter={false}
 		/>
