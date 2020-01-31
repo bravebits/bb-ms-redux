@@ -84,6 +84,7 @@ class Directory extends Component {
 						${isSelected ? css['active'] : ''}
 						${isMultiSelected ? css['checked'] : ''}
 					`}
+					onClick={this.openFolder}
 				>
 					<div className={`${css['list-media__item__checkbox']}`}>
 						<div className={`${css['css-checkbox']}`}>
@@ -102,8 +103,7 @@ class Directory extends Component {
 							</label>
 						</div>
 					</div>
-					<div className={`${css['list-media__item__avatar']} ${css['list-media__item__folder']}`}
-						onClick={this.openFolder}>
+					<div className={`${css['list-media__item__avatar']} ${css['list-media__item__folder']}`}>
 						<span>
 							<i className="fa fa-folder-o"></i>
 						</span>

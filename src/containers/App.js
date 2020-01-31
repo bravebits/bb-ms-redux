@@ -30,6 +30,7 @@ class App extends Component {
 		// Make sure current path is inside root folder.
 		if (folder !== undefined && !path.startsWith(folder)) {
 			path = folder
+			selected = undefined
 		}
 
 		// Initialize props.

@@ -157,6 +157,8 @@ class File extends Component {
 						${isSelected ? css['active'] : ''}
 						${isMultiSelected ? css['checked'] : ''}
 					`}
+					onClick={this.selectFile}
+					onDoubleClick={this.chooseFile}
 				>
 					<div className={`${css['list-media__item__checkbox']}`}>
 						<div className={`${css['css-checkbox']}`}>
@@ -175,11 +177,7 @@ class File extends Component {
 							</label>
 						</div>
 					</div>
-					<div
-						className={`${css['list-media__item__avatar']}`}
-						onDoubleClick={this.chooseFile}
-						onClick={this.selectFile}
-					>
+					<div className={`${css['list-media__item__avatar']}`}>
 						<img
 							src={
 								`${globalVars.get('config').baseURL}${this.props.currentPath}${this.props.data.name}`
