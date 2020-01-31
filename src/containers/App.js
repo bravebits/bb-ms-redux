@@ -28,7 +28,7 @@ class App extends Component {
 		let path = selected ? selected.substring(0, selected.lastIndexOf('/') + 1) : libs.getPathFromLocal()
 
 		// Make sure current path is inside root folder.
-		if (folder !== undefined && !path.includes(folder)) {
+		if (folder !== undefined && !path.startsWith(folder)) {
 			path = folder
 		}
 
